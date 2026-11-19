@@ -108,7 +108,7 @@ Only results from a real Studio run go here. Paste each `VFXLAB_RESULTS` line un
 
 | Date | Device / settings | Suite or test | Result | Notes |
 |---|---|---|---|---|
-| (not run) | PC, solo play | local suite (T) | not run yet | |
+| 2026-11-19 | PC (Lenovo LOQ 15, RTX 4060), Studio Play Solo, graphics Automatic, lab Medium | local suite (T) | **29 checks, 26 PASS, 3 FAIL** | All render, visibility, cleanup, camera and respawn checks pass. The 3 FAILs are the performance checks (see below) |
 | (not run) | Studio Local Server, 2 players | replication suite (Y) | not run yet | |
 | (not run) | PC, lowest graphics, lab Low | local suite (T) | not run yet | |
 | (not run) | Device emulator (phone) | local suite (T) + keys 1-6 | not run yet | |
@@ -117,6 +117,10 @@ Only results from a real Studio run go here. Paste each `VFXLAB_RESULTS` line un
 
 | Preset | Device | avg FPS | p95 ms | worst ms | played / culled / capped |
 |---|---|---|---|---|---|
-| Low | (pending) | | | | |
-| Medium | (pending) | | | | |
-| High | (pending) | | | | |
+| Low | PC, Studio | 59 | 17.9 | 19.2 | |
+| Medium | PC, Studio | 59 | 17.9 | |  |
+| High | PC, Studio | 59 | 17.9 | 19.4 | |
+
+**2026-11-19 performance FAILs, read carefully.** The check is `p95Ms <= 16.7` (a strict 60 FPS). Studio caps the client at 60 FPS, and all three presets measured the same p95 17.9 ms / avg 59 FPS. If the effects were the cost, Low would be faster than High; it isn't. So these FAILs most likely show the 60 FPS cap plus frame jitter, not effect cost. **Not yet proven:** confirm by running B (benchmark) with no effects active as a baseline, and run the suite on lowest graphics and on the phone emulator. Suggested test fix: compare against a no-effects baseline (pass if p95 rises by less than ~2 ms) instead of an absolute 16.7 ms.
+
+Still not run: replication suite (Y, needs Local Server with 2 players), phone emulator, lowest graphics, visual check.
