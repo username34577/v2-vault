@@ -60,13 +60,12 @@ local function makeRig(colors)
 	return nil
 end
 
--- Animation ids come from the rig's own Animate script (Roblox's defaults for that body).
-local function readAnimationIds(rig)
+-- Animation ids come from an Animate script that Roblox generates (its default R15 set), so no ids
+-- are typed here. Rigs made by Studio's auto-setup have no Animate, so we borrow the defaults once from
+-- a temporary default body.
+local defaultIds
+local function idsFrom(animate)
 	local ids = {}
-	local animate = rig:FindFirstChild("Animate")
-	if not animate then
-		return ids
-	end
 	for _, name in { "idle", "walk", "run", "jump", "fall" } do
 		local holder = animate:FindFirstChild(name)
 		local anim = holder and holder:FindFirstChildOfClass("Animation")
@@ -74,8 +73,28 @@ local function readAnimationIds(rig)
 			ids[name] = anim.AnimationId
 		end
 	end
-	animate:Destroy() -- a LocalScript can't drive a server-owned NPC; we play the tracks below
 	return ids
+end
+
+local function readAnimationIds(rig)
+	local animate = rig:FindFirstChild("Animate")
+	if animate then
+		local ids = idsFrom(animate)
+		animate:Destroy() -- a LocalScript can't drive a server-owned NPC; we play the tracks below
+		return ids
+	end
+	if not defaultIds then
+		local ok, temp = pcall(Players.CreateHumanoidModelFromDescription, Players, Instance.new("HumanoidDescription"), Enum.HumanoidRigType.R15)
+		defaultIds = {}
+		if ok and temp then
+			local a = temp:FindFirstChild("Animate")
+			if a then
+				defaultIds = idsFrom(a)
+			end
+			temp:Destroy()
+		end
+	end
+	return table.clone(defaultIds)
 end
 
 local function loadTracks(humanoid, ids)
@@ -164,12 +183,12 @@ local cosmeticBuilders = {
 		local leafB = Build.ellipsoid(Vector3.new(1, 0.2, 0.55) * s, P.Mint, top * CFrame.new(-0.4 * s, 0.7 * s, 0) * CFrame.Angles(0, 0, 0.45), m)
 		return { stem, leafA, leafB }, head
 	end,
-	Horns = function(m, head, s)
-		local parts = {}
+	Bow = function(m, head, s)
+		-- a big bow on the side of the head
+		local center = head.CFrame * CFrame.new(head.Size.X * 0.32, head.Size.Y * 0.38, 0) * CFrame.Angles(0, 0, -0.35)
+		local parts = { Build.ball(0.45 * s, P.Coral, center, m) }
 		for _, sx in { -1, 1 } do
-			local base = head.CFrame * CFrame.new(sx * head.Size.X * 0.3, head.Size.Y * 0.42, 0) * CFrame.Angles(0, 0, -sx * 0.35)
-			table.insert(parts, Build.ellipsoid(Vector3.new(0.45, 1.1, 0.45) * s, P.Cream, base * CFrame.new(0, 0.45 * s, 0), m))
-			table.insert(parts, Build.ball(0.4 * s, P.Cream, base * CFrame.new(0, 0.95 * s, 0), m))
+			table.insert(parts, Build.ellipsoid(Vector3.new(0.9, 0.6, 0.35) * s, P.Bubblegum, center * CFrame.new(sx * 0.5 * s, 0, 0) * CFrame.Angles(0, 0, sx * 0.25), m))
 		end
 		return parts, head
 	end,

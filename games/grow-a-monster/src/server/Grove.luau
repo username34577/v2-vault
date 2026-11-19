@@ -406,9 +406,9 @@ local function makeGardener(folder)
 	if head then
 		-- straw hat
 		local s = G.GardenerScale
-		local brim = Build.cylinder(4.2 * s, 0.25 * s, Color3.fromHex("#F2D28B"), head.CFrame * CFrame.new(0, head.Size.Y * 0.28, 0), rig)
-		local top = Build.cylinder(2.2 * s, 1.1 * s, Color3.fromHex("#E8C273"), head.CFrame * CFrame.new(0, head.Size.Y * 0.28 + 0.6 * s, 0), rig)
-		local band = Build.cylinder(2.25 * s, 0.3 * s, P.Coral, head.CFrame * CFrame.new(0, head.Size.Y * 0.28 + 0.25 * s, 0), rig)
+		local brim = Build.cylinder(3.3 * s, 0.22 * s, Color3.fromHex("#F2D28B"), head.CFrame * CFrame.new(0, head.Size.Y * 0.42, 0), rig)
+		local top = Build.cylinder(1.9 * s, 0.9 * s, Color3.fromHex("#E8C273"), head.CFrame * CFrame.new(0, head.Size.Y * 0.42 + 0.5 * s, 0), rig)
+		local band = Build.cylinder(1.95 * s, 0.28 * s, P.Coral, head.CFrame * CFrame.new(0, head.Size.Y * 0.42 + 0.2 * s, 0), rig)
 		for _, part in { brim, top, band } do
 			part.Anchored = false
 			part.Massless = true
@@ -666,26 +666,28 @@ function Grove.build(cb)
 		end
 	end)
 	local board = Build.block(Vector3.new(7, 3.4, 0.4), P.Cream, standCF * CFrame.new(0, 8.4, -1.3), folder)
-	local gui = Instance.new("SurfaceGui")
-	gui.Face = Enum.NormalId.Front
-	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = 36
-	gui.Parent = board
-	local list = Instance.new("TextLabel")
-	list.BackgroundTransparency = 1
-	list.Size = UDim2.fromScale(0.94, 0.94)
-	list.Position = UDim2.fromScale(0.03, 0.03)
-	list.Font = Enum.Font.FredokaOne
-	list.TextScaled = true
-	list.TextColor3 = P.Outline
 	local lines = { "BACKPACKS" }
 	for _, b in Config.Backpacks do
 		if b.Price > 0 then
 			table.insert(lines, `{b.Name}: carry {b.Carry} - {b.Price} coins`)
 		end
 	end
-	list.Text = table.concat(lines, "\n")
-	list.Parent = gui
+	for _, face in { Enum.NormalId.Front, Enum.NormalId.Back } do -- readable from both sides
+		local gui = Instance.new("SurfaceGui")
+		gui.Face = face
+		gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+		gui.PixelsPerStud = 36
+		gui.Parent = board
+		local list = Instance.new("TextLabel")
+		list.BackgroundTransparency = 1
+		list.Size = UDim2.fromScale(0.94, 0.94)
+		list.Position = UDim2.fromScale(0.03, 0.03)
+		list.Font = Enum.Font.FredokaOne
+		list.TextScaled = true
+		list.TextColor3 = P.Outline
+		list.Text = table.concat(lines, "\n")
+		list.Parent = gui
+	end
 
 	folder.Parent = workspace
 

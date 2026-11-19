@@ -233,7 +233,7 @@ Config.Monster = {
 	-- Cosmetic unlocks at size milestones (in order)
 	Milestones = {
 		{ Size = 25, Id = "Sprout", Name = "Leaf Sprout" },
-		{ Size = 100, Id = "Horns", Name = "Horns" },
+		{ Size = 100, Id = "Bow", Name = "Big Bow" }, -- was Horns; the v0.4 monster mesh has its own horns
 		{ Size = 1000, Id = "Wings", Name = "Wings" },
 		{ Size = 10000, Id = "Crown", Name = "Crown" },
 		{ Size = 100000, Id = "Aura", Name = "Sparkle Aura" },
@@ -332,8 +332,8 @@ Config.RepeatObjective = { Type = "Deliver", Goal = 10, Text = "Feed your monste
 
 -- The companion monster (a rigged R15 creature). Scale grows with Size, capped to fit the plot.
 Config.Companion = {
-	MinScale = 1.5,
-	MaxScale = 4.5,
+	MinScale = 2, -- the generated monster is ~5 studs tall at scale 1, so ~10 studs at spawn
+	MaxScale = 5,
 	ScalePerRootSize = 0.06,
 	FollowDistance = 7, -- studs behind you
 	RunDistance = 22, -- further than this: it runs
@@ -358,13 +358,16 @@ Config.Tutorial = {
 -- Empty or broken slots are skipped silently, so the game works before they're filled.
 ---------------------------------------------------------------------------
 Config.Sounds = {
-	Throw = { Id = "", Volume = 0.5, PitchVariance = 0.08 }, -- short soft "whoosh/swish" as food leaves your hand
-	Gulp = { Id = "", Volume = 0.7, PitchVariance = 0.1 }, -- cartoon "gulp" or "nom" when the monster eats
-	Coin = { Id = "", Volume = 0.35, PitchVariance = 0.05 }, -- tiny bright "ting" when coins are earned
-	Purchase = { Id = "", Volume = 0.6, PitchVariance = 0 }, -- happy "cha-ching" / register when you buy food
-	Milestone = { Id = "", Volume = 0.7, PitchVariance = 0 }, -- short fanfare/jingle when a new look unlocks
-	ButtonClick = { Id = "", Volume = 0.4, PitchVariance = 0.04 }, -- soft "pop" UI click
-	Whoosh = { Id = "", Volume = 0.6, PitchVariance = 0 }, -- airy "whoosh" when you fall off and get put back
+	-- Free Creator Store sounds, checked to load in this experience on 2026-11-19 (asset name in brackets).
+	Throw = { Id = "9120972321", Volume = 0.45, PitchVariance = 0.08 }, -- [Wood Whoosh Slicing Air Quick Swings 4 (SFX)]
+	Gulp = { Id = "120043778768093", Volume = 0.7, PitchVariance = 0.1 }, -- [gulp3]
+	Coin = { Id = "135483737426662", Volume = 0.35, PitchVariance = 0.05 }, -- [Coin Collect]
+	Purchase = { Id = "1169806635", Volume = 0.6, PitchVariance = 0 }, -- [Coin Collect 2 - SFX]
+	Milestone = { Id = "4757565956", Volume = 0.6, PitchVariance = 0 }, -- [TaDa]
+	ButtonClick = { Id = "", Volume = 0.4, PitchVariance = 0.04 }, -- soft "pop" UI click (empty: skipped)
+	Whoosh = { Id = "123796710194563", Volume = 0.6, PitchVariance = 0 }, -- [Whoosh Swinging Sound]
+	Shake = { Id = "6644702473", Volume = 0.7, PitchVariance = 0.1 }, -- [Bush Rustle 1] shaking a snack plant
+	Caught = { Id = "3765689841", Volume = 0.8, PitchVariance = 0 }, -- [Cartoon Bonk] the Gardener catches you
 }
 
 return Config

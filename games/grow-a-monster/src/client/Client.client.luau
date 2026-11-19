@@ -236,10 +236,10 @@ FxRemote.OnClientEvent:Connect(function(kind, a, b, c)
 		local growth = tonumber(c) or 1
 		Feel.ate(a, b, growth, a:GetAttribute("OwnerUserId") == player.UserId)
 	elseif kind == "Picked" then
-		Sound.play("Coin", 1.3)
+		Sound.play("Shake")
 		UI.pop(Hud.throwButton(), 1.15)
 	elseif kind == "Caught" then
-		Sound.play("Whoosh")
+		Sound.play("Caught")
 		flash(Config.Palette.Coral, 0.35)
 		Hud.toast("BONK! The Gardener caught you and took your snacks. Hide in the tall grass!", "warn")
 	elseif kind == "Objective" then

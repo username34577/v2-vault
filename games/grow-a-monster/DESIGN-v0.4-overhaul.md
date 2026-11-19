@@ -2,7 +2,7 @@
 title: Grow a Monster - v0.4 Overhaul Design
 date: 2026-11-19
 tags: [design, grow-a-monster]
-status: proposed
+status: slice built 2026-11-19 (see TESTING-v0.4)
 ---
 
 # Grow a Monster — v0.4 Overhaul: "Snack Grove"

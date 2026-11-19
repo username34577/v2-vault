@@ -1,8 +1,21 @@
 # Grow a Monster
 
-> Throw food at your monster until it's huge. Biggest monster on the server wins.
+> Sneak snacks out of the Grumpy Gardener's grove and feed your monster until it's huge.
 
-Idea source: [[Game Ideas]] (#2). Mixes Throw Food For Animals (silly throwing, top 5) with Grow a Garden (grow + collect).
+Idea source: [[Game Ideas]] (#2). Why it changed in v0.4: [[AUDIT-2026-11-19]] · [[New Roblox Hits - Design Lessons (Nov 2026)]] · [[DESIGN-v0.4-overhaul]] · Test log: [[TESTING-v0.4]]
+
+## v0.4: Snack Grove (2026-11-19)
+
+The old loop was "press THROW forever". Now food has to be **won**:
+
+1. Your monster (a rigged creature) follows you. The objective card says what to do; a glowing line shows where to go.
+2. Cross the bridge to the **Snack Grove**. Your monster waits by the bridge ("too loud for the Grove").
+3. **Hold E** (or tap the prompt) on a snack plant to shake it: Apple Bush +2, Burger Shrub +6, Cake Tree +18, **Golden Melon** +80. Snacks stack on your head (carry limit from your backpack).
+4. The **Grumpy Gardener** patrols with a visible yellow vision cone. If he sees you carrying snacks for ~0.35 s: BONK, you drop everything and land outside the gate. **Tall grass hides you.** The best snacks grow nearest his route.
+5. Walk out and press **FEED** (F / click / tap / R2): your monster hops and catches each snack. Size and coins go up.
+6. Objectives: 3 snacks → 6 snacks → buy the Bigger Backpack (stand by the bridge) → steal the Golden Melon → Size 250, then repeating "feed 10".
+
+Kept from before: session-locked saving, rate-limited remotes, plots and plot decor, leaderboard, offline earnings, fall safety. The food shop is hidden (upgrades are sold in the world); old food ownership stays in the save, unused.
 
 ## v0.1 (built 2026-11-18)
 
@@ -41,16 +54,18 @@ Look: bright, cute-cartoony, cozy (Grow a Garden with a goofy edge). One palette
 | `src/shared/Props.luau` | ReplicatedStorage.Shared | Flowers, trees, bushes, rocks, crown |
 | `src/shared/FoodModels.luau` | ReplicatedStorage.Shared | The 6 food shapes |
 | `src/shared/Format.luau` | ReplicatedStorage.Shared | 1.2K / 3.4M number format |
-| `src/server/Main.server.luau` | ServerScriptService | Plots, throwing, shop, income, leaderboard, fall safety |
+| `src/server/Main.server.luau` | ServerScriptService | Plots, feeding, objectives, backpacks, companions following, income, leaderboard, fall safety |
+| `src/server/Grove.luau` | ServerScriptService | Snack Grove island, bridge, plants, tall grass, Grumpy Gardener (patrol + sight), carrying, backpack stand |
+| `src/server/Companion.luau` | ServerScriptService | Rigged monster companion: follow/wait, R15 animations, scaling, milestone looks, name tag |
 | `src/server/World.luau` | ServerScriptService | Island, hub, plots, signs, lighting |
-| `src/server/Monster.luau` | ServerScriptService | Monster hitbox + size |
 | `src/server/Data.luau` | ServerScriptService | Saving (session-locked), unchanged |
 | `src/client/Client.client.luau` | StarterPlayerScripts | Entry: input, server sync, cues |
-| `src/client/MonsterView.luau` | StarterPlayerScripts | Draws and animates every monster |
+| `src/client/MonsterView.luau` | StarterPlayerScripts | Mouth position, scale, milestone events for the rigged monsters |
+| `src/client/Guide.luau` | StarterPlayerScripts | Glowing guide line to the next place to go |
 | `src/client/FoodFlight.luau` | StarterPlayerScripts | Thrown food arcs |
 | `src/client/Decor.luau` | StarterPlayerScripts | Cloud sea + bobbing mini-islands |
-| `src/client/UI.luau`, `Hud.luau`, `Shop.luau` | StarterPlayerScripts | UI kit, HUD, shop |
-| `src/client/Feel.luau`, `Tutorial.luau`, `Sound.luau` | StarterPlayerScripts | Juice, first-30-seconds hint, sounds |
+| `src/client/UI.luau`, `Hud.luau`, `Shop.luau` | StarterPlayerScripts | UI kit, HUD (objective card, carry badge); Shop is unused in v0.4 |
+| `src/client/Feel.luau`, `Tutorial.luau`, `Sound.luau` | StarterPlayerScripts | Juice, old first-30-seconds hint (unused in v0.4), sounds |
 
 To rebalance or restyle the game, only edit `Config.luau`.
 
@@ -64,7 +79,8 @@ To rebalance or restyle the game, only edit `Config.luau`.
 
 Things that can only be done in Studio:
 - **Lighting → LightingStyle = Realistic** (one click). The script tries to set it, but if scripts aren't allowed to, the soft shadows won't show.
-- **Sounds:** open the Creator Store (Toolbox → Audio), pick free sounds, and paste their IDs into `Config.Sounds` (each slot says what it's for). Empty slots are skipped silently.
+- **Sounds:** v0.4 fills every slot except ButtonClick with free Creator Store sounds (checked to load). Swap any ID in `Config.Sounds`.
+- **Monster model:** the rigged monster lives in `ServerStorage.MonsterRig` in the place file (not in Rojo). Save the place after changing it. Without it the game falls back to a plain tinted R15 body.
 - To test saving: Game Settings → Security → **Enable Studio Access to API Services** (game must be published first).
 - Set **Max Players to 8** (Game Settings → Places) to match the 8 plots.
 - Phone check: **Test → Device** emulator (e.g. iPhone 14 landscape) and play a minute.
