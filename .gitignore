@@ -16,3 +16,7 @@ LihFolk Vault V2/.obsidian/plugins/*
 LihFolk Vault V2/.smart-env/
 /.obsidian/
 *.bak
+
+# local tools (Rojo etc.), never committed
+/tools/
+*.exe
