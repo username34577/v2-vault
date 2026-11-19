@@ -1,0 +1,32 @@
+name: Game checks
+
+on:
+  push:
+    paths:
+      - "games/**"
+      - ".github/workflows/game-checks.yml"
+  pull_request:
+    paths:
+      - "games/**"
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    env:
+      LUAU_VERSION: "0.744"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Luau
+        run: |
+          curl -sSL -o luau.zip "https://github.com/luau-lang/luau/releases/download/${LUAU_VERSION}/luau-ubuntu.zip"
+          unzip -q luau.zip -d "$HOME/luau"
+      - name: Every game script compiles
+        run: |
+          status=0
+          while IFS= read -r f; do
+            if ! "$HOME/luau/luau-compile" "$f" > /dev/null; then
+              echo "::error file=$f::Luau compile failed"
+              status=1
+            fi
+          done < <(find games -name '*.luau' -o -name '*.lua' | sort)
+          exit $status
