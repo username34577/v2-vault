@@ -1,5 +1,8 @@
 # Grow a Monster
 
+> **Status (2026-11-19): archived.** Paused in favor of [[games/snatch-the-sun/DESIGN|Snatch the Sun]]. Kept for a possible return; nothing deleted.
+
+
 > Sneak snacks out of the Grumpy Gardener's grove and feed your monster until it's huge.
 
 Idea source: [[Game Ideas]] (#2). Why it changed in v0.4: [[AUDIT-2026-11-19]] · [[New Roblox Hits - Design Lessons (Nov 2026)]] · [[DESIGN-v0.4-overhaul]] · Test log: [[TESTING-v0.4]]

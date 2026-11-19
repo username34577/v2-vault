@@ -33,3 +33,13 @@ Launch yourself as a ragdoll across a city to deliver packages. Unlock bigger ca
 ## 5. Ice Cream Truck: Night Route
 Sell ice cream around the neighborhood by day; after dark the customers aren't human. Co-op.
 - Based on: job-by-day, horror-by-night (Sell Fries!, 2.25M visits/day) + co-op survival (99 Nights)
+
+## More ideas (2026-11-19)
+- **Steal a Pet from the Mansion**: sneak into a mansion at night, steal exotic pets past robot butlers; pets earn coins at your base; others can steal them.
+- **Hide in Plain Sight: Fridge Edition**: one midnight snacker hunts; everyone else hides as food.
+- **Feed the Giant Frog**: throw bugs into a giant frog from farther away; train your arm; new swamps. Close to Throw Food For Animals.
+- **Escape the Washing Machine**: shrunk in a house; obby rooms with household threats.
+- **Grandma's Cookie Heist (co-op)**: 2–4 players distract, grab, and watch the hallway.
+- **Build a Snowman Army**: roll growing snowballs, stack snowmen, fight other players' snowmen. Seasonal (December).
+- **Night Shift at the Toy Store**: stock shelves by day, survive living toys at night.
+- **Steal the Sun → now [[games/snatch-the-sun/DESIGN|Snatch the Sun]]** (chosen 2026-11-19).
