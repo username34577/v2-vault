@@ -1,0 +1,23 @@
+{
+  "name": "VFXLab",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      }
+    },
+    "ServerScriptService": {
+      "VFXLab": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "VFXLabClient": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}

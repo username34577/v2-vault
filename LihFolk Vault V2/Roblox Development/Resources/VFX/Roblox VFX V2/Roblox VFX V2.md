@@ -21,20 +21,26 @@ researched: 2026-11-19
 | [[Roblox VFX V2/API Reference\|API Reference]] | `VFXKit.build`, the Studio kit (`buildTemplate`, `spawn`, `play`, `preload`), `HitSystem`, the CLI scripts |
 | [[Roblox VFX V2/Examples\|Examples]] | Luau examples built on the real API, plus a recipe that passes the verifier |
 | [[Roblox VFX V2/Integration\|Integration]] | Where everything goes in Studio and Rojo, client vs server, performance, cleanup |
-| [[Roblox VFX V2/Troubleshooting\|Troubleshooting]] | Known problems: from the repo, and found while testing it |
+| [[Roblox VFX V2/Troubleshooting\|Troubleshooting]] | Known problems: from the repo, and found while testing it, with what was fixed in our layer |
+| [[Roblox VFX V2/Test Lab\|Test Lab]] | The `games/vfx-lab` Rojo project: arena, dummy, test panel, Studio test procedure, results log |
 
-## Status (2026-11-19)
+**Our layer on top of the skill** lives in `games/vfx-lab/` (repo root): a reusable runtime (`src/shared/VFX/`: quality presets, effect runner, camera guard, kit runner, cue list), multiplayer server/client modules, the VFX library with an asset manifest, the three Snatch the Sun effects, and `tools/check.sh` that validates it all. The upstream skill is left exactly as shipped.
+
+## Status (updated 2026-11-19, second pass)
 
 | Item | Status |
 |---|---|
-| Skill installed with the repo's `install.sh` into `~/.claude/skills/roblox-vfx` (cloud container) | **Verified**: the skill loads in Claude Code |
+| Skill installed with `install.sh` into `~/.claude/skills/roblox-vfx` (cloud container) | **Verified**: loads in Claude Code |
+| Full texture build: base, magic, painted, library | **Verified**: library 2,570 textures, 0 errors; `check_library.py` 0 issues (217 MB total) |
+| Blender meshes and props | **Missing**: no Blender in the cloud (no apt package; only `bpy` 5.x wheels, the repo targets 4.x). None of our effects need meshes yet |
+| Roblox Studio MCP | **Not configured** in the cloud session (no Studio tools, no shared computer). Studio steps run on your PC |
 | `verify_vfx.py --self-test` | **Verified**: 10/10 sabotages caught |
-| `critic_gate.py` on the 3 worked examples | **Verified**: Eclipse Rend 9/9 PASS, Riptide Lance 9/9 PASS, Crimson Detonation **FAIL** (no `brief` block) |
-| `studio_kit.js` export of all 3 examples to Luau kits | **Verified**: 3 kits generated, syntax-checked |
-| Texture generators (Python) | **Verified**: base, magic and painted textures built; library build checked (see [[Roblox VFX V2/Installation\|Installation]]) |
-| `emit_luau.py` with a hand-written recipe | **Verified**: `VFXKit` emitted, recipe passes `verify_vfx.py` clean |
-| Blender mesh generators, Lune gates | **Not run**: Blender and Lune are not available in the cloud session |
-| Anything inside Roblox Studio | **Not tested**: needs your PC with Studio (no Studio connection from the cloud) |
+| Critic gate on the worked examples | **Verified**: Eclipse Rend 9/9, Riptide Lance 9/9. Crimson Detonation fails only because it has no `brief`; with a brief from its own builder's docstring it passes 9/9 |
+| Camera stuck after cinematic kits | **Fixed in our layer** (`CameraGuard` + `KitRunner`); upstream kit unchanged |
+| Missing `sync_vt.py` (`__vt` / `__em` textures) | **Replaced** by `tools/vfx_manifest.py`; both derivations pixel-checked |
+| Snatch the Sun effects (`SunAura`, `SunBurst`, `SunVictory`) | **Verified outside Studio**: 3 recipes clean, `VFXKit` emitted, previewed in the roblox-vfx sim, tuned from the previews |
+| VFX Lab Rojo project | **Built and checked** (`tools/check.sh`: all passed, Roblox API check 0 findings). **Not yet run in Studio** |
+| Anything inside Roblox Studio | **Not tested**: follow [[Roblox VFX V2/Test Lab\|Test Lab]] on your PC and record results there |
 
 ## Related vault notes
 

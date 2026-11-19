@@ -9,24 +9,27 @@ Part of [[Roblox VFX V2]]. Previous: [[Roblox VFX V2/Integration|Integration]] �
 
 Sources: **found 2026-11-19** = seen while testing the repo in the cloud session; **repo** = the author's measured traps in SKILL.md (the author dates them 2026-08 to 2026-11, measured in Studio). For general particle debugging see [[Particle Emitters In Depth]].
 
-## Found while testing (2026-11-19)
+## Found while testing (2026-11-19), with status
 
-| Symptom | Cause | Fix |
+Status: **fixed** = solved in our layer (`games/vfx-lab`, upstream untouched) · **explained** = investigated, nothing to fix · **open** = still needs action.
+
+| Symptom | Cause | Status and fix |
 |---|---|---|
-| After a kit plays, the player's camera stays frozen | `M.play` sets `CameraType = Scriptable` when the effect has a camera, and never sets it back | `Kit.spawn(origin, template, {screen = false})` for gameplay, or restore `CameraType = Enum.CameraType.Custom` after `Kit.DURATION` ([[Roblox VFX V2/Examples|Examples]], example 6) |
-| `[<Kit>] missing texture sim:beam_paint__vt` (or any `__vt` id) | Beam/Trail textures are exported as transposed copies `<id>__vt`. The exporter's comment says `tools/sync_vt.py` writes them, but **that file is not in the repo** | Make the transposed PNG yourself before uploading (workaround below, untested in Studio) |
-| `verify_vfx.py some.json` prints "no recipe library given" | The script requires `--lib` even for one file (SKILL.md shows it without) | `python scripts/verify_vfx.py --lib <folder holding the recipe>` |
-| `critic_gate.py` fails `explosion_crimson.json`: "no 'brief' block" | The shipped Crimson Detonation example has no design brief | Expected for that example. Your own effects need a `brief` block (see `references/DESIGN.md` step 1) |
-| `phys_audit.js` prints nothing | It only audits effects with `{"do":"hit"}` events and a sim target; none of the 3 examples have them | Not an error. It matters once your effects hit a target |
-| `node: command not found` when exporting | The README's prerequisite list omits Node.js, but `studio_kit.js` needs it | Install Node.js LTS |
-| A kit is close to or over the size limit | Big kits inline every instance; Crimson Detonation exports at 185,221 characters | Keep kits under 200,000 characters (see Source cap below). Split big effects, or reuse templates |
-| No way to upload the textures and meshes | The repo has no upload script, despite the optional Open Cloud key in the README | Upload in Studio (Asset Manager → Bulk Import or the Creator Dashboard), meshes as **FBX from `sim/mesh/obj_to_fbx.py`**, then fill the `assets` table |
-
-Workaround for the missing `__vt` textures (Pillow, from the skill folder). It is **not part of the repo** and has not been checked in Studio, so compare one beam against the sim before trusting it:
-
-```bash
-python -c "from PIL import Image; import sys; Image.open(sys.argv[1]).transpose(Image.Transpose.TRANSPOSE).save(sys.argv[2])" sim/textures/beam_paint.png sim/textures/beam_paint__vt.png
-```
+| After a cinematic kit, the player's camera stays frozen | `M.play` sets `CameraType = Scriptable` when the effect defines a camera and never sets it back. The kit's shake/FOV driver unbinds itself and is not the problem | **Fixed**: play kits through `KitRunner.play(..., {cinematic = true})`. It takes the camera via `CameraGuard` (one owner at a time) and restores type, subject and FOV after `DURATION + 0.5` s, on death or respawn, or when the camera is replaced. Ordinary moves use `{screen = false}`. The lab's "Repro: raw kit" button shows the original bug |
+| `[<Kit>] missing texture sim:<id>__vt` / `__em` | `studio_kit.js` asks for transposed Beam/Trail textures (`__vt`) and premultiplied emissive masks (`__em`) and says `tools/sync_vt.py` writes them. **That file is not in the repo, the zip or its history** (one commit) | **Fixed**: `tools/vfx_manifest.py` writes both into `library/derived/` (transpose and RGB × alpha, both pixel-checked) and lists them for upload |
+| No upload tooling | The README mentions an optional Open Cloud key, but **no upload script ships** (searched the repo, zip and history) | **Explained / manual**: upload in Studio (Asset Manager → Bulk Import) only the files `vfx_manifest.py --stage upload/` copies, then record ids with `--set`. An Open Cloud uploader is not part of our layer either (it would need your key) |
+| `critic_gate.py` fails `explosion_crimson.json`: "no 'brief' block" | Its builder `build_explosion.py` predates the brief rule; the gate stops at the first FAIL | **Explained**: with a brief built only from the builder's own docstring (`tools/crimson_brief_overlay.py`, a copy in the lab) it passes **9/9**. The effect is fine; its metadata is missing |
+| Stock-texture recipes draw **nothing** in the sim | `vfxrender.js` maps stock `rbxasset://` textures to stand-ins `star4` and `soft_dot` (also the fallback), but **no generator writes those PNGs** | **Fixed for previews**: `tools/render_previews.js` serves the skill's own `spark_star4.png` / `glow_soft.png` in their place. In the workbench itself it is still **open** (upstream) |
+| The sim page shows no three.js / blank workbench | `sim/index.html` loads three.js r128 from `cdnjs.cloudflare.com`; blocked in some networks (it was in the cloud session) | **Fixed for previews**: `render_previews.js --three <file>` serves a local copy (`npm pack three@0.128.0` → `package/build/three.min.js`) |
+| `obj_to_fbx.py` converts nothing | `make_meshes.py` / `make_props.py` write OBJs to `sim/meshes/`, but `obj_to_fbx.py` reads `sim/mesh/assets/meshes/` | **Open (upstream)**: copy the OBJs there before converting, or edit the `SRC` path in your local copy |
+| Blender meshes and props are missing | No Blender in the cloud session: no apt package, and only `bpy` 5.x wheels exist for its Python 3.13, while the repo targets Blender 4.x | **Open**: run the mesh step on your PC with Blender 4.x (see [[Roblox VFX V2/Installation\|Installation]]). Nothing we ship needs meshes yet: the three Snatch the Sun effects use stock textures and EclipseRend needs 0 meshes |
+| Roblox Studio MCP not available | The cloud session has no Studio MCP tools and no shared computer | **Open**: Studio steps run in Claude Code on your PC with the official Studio MCP enabled; check it with `execute_luau` (`return 1`) plus a screenshot |
+| `verify_vfx.py some.json` prints "no recipe library given" | It requires `--lib` even for one file (SKILL.md shows it without) | **Explained**: always pass `--lib <folder>`; `tools/check.sh` does |
+| A hand-written recipe fails `verify_vfx.py` with "N of 31 properties missing" | The verifier requires every ParticleEmitter property (that is how it catches bad harvests) | **Fixed for authoring**: generate recipes with `tools/author_recipes.py` (fills all 31 from Roblox defaults) |
+| `phys_audit.js` prints nothing | It only audits effects with `{"do":"hit"}` events and a sim target | **Explained**: not an error |
+| `node: command not found` when exporting | The README omits Node.js, but `studio_kit.js` needs it | Install Node.js LTS |
+| A kit near the 200,000-character Source cap | Big kits inline every instance; Crimson Detonation exports at 185,221 characters | `tools/check.sh` fails any kit at or over 200,000 |
+| SKILL.md says rig animation and afterimages are not exported | The current `studio_kit.js` does export `M.animate` and `M.ghost` | **Explained**: docs out of date. `M.animate` needs an **R6** caster; on R15 it warns "caster is not an R6 rig" and skips |
 
 ## Studio and assets (repo)
 

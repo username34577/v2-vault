@@ -1503,11 +1503,12 @@ One line per note: `title | path | tags | ~whole-note tokens`. Grep it for an AP
 
 ## Roblox Development
 
-- API Reference | Roblox Development/Resources/VFX/Roblox VFX V2/API Reference.md | resources, vfx, tool, api, luau, roblox-vfx | ~2.5k tok
-- Examples | Roblox Development/Resources/VFX/Roblox VFX V2/Examples.md | resources, vfx, tool, examples, luau, roblox-vfx | ~3.5k tok
-- Installation | Roblox Development/Resources/VFX/Roblox VFX V2/Installation.md | resources, vfx, tool, setup, install, roblox-vfx | ~1.4k tok
-- Integration | Roblox Development/Resources/VFX/Roblox VFX V2/Integration.md | resources, vfx, tool, integration, studio, rojo, roblox-vfx | ~2.0k tok
-- Overview | Roblox Development/Resources/VFX/Roblox VFX V2/Overview.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~1.6k tok
-- Prerequisites | Roblox Development/Resources/VFX/Roblox VFX V2/Prerequisites.md | resources, vfx, tool, setup, roblox-vfx | ~1.2k tok
-- Roblox VFX V2 | Roblox Development/Resources/VFX/Roblox VFX V2/Roblox VFX V2.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~880 tok
-- Troubleshooting | Roblox Development/Resources/VFX/Roblox VFX V2/Troubleshooting.md | resources, vfx, tool, troubleshooting, debugging, roblox-vfx | ~2.0k tok
+- API Reference | Roblox Development/Resources/VFX/Roblox VFX V2/API Reference.md | resources, vfx, tool, api, luau, roblox-vfx | ~3.2k tok
+- Examples | Roblox Development/Resources/VFX/Roblox VFX V2/Examples.md | resources, vfx, tool, examples, luau, roblox-vfx | ~4.3k tok
+- Installation | Roblox Development/Resources/VFX/Roblox VFX V2/Installation.md | resources, vfx, tool, setup, install, roblox-vfx | ~1.8k tok
+- Integration | Roblox Development/Resources/VFX/Roblox VFX V2/Integration.md | resources, vfx, tool, integration, studio, rojo, roblox-vfx | ~3.0k tok
+- Overview | Roblox Development/Resources/VFX/Roblox VFX V2/Overview.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~1.8k tok
+- Prerequisites | Roblox Development/Resources/VFX/Roblox VFX V2/Prerequisites.md | resources, vfx, tool, setup, roblox-vfx | ~1.4k tok
+- Roblox VFX V2 | Roblox Development/Resources/VFX/Roblox VFX V2/Roblox VFX V2.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~1.2k tok
+- Test Lab | Roblox Development/Resources/VFX/Roblox VFX V2/Test Lab.md | resources, vfx, tool, testing, studio, rojo, performance, roblox-vfx | ~1.6k tok
+- Troubleshooting | Roblox Development/Resources/VFX/Roblox VFX V2/Troubleshooting.md | resources, vfx, tool, troubleshooting, debugging, roblox-vfx | ~2.6k tok

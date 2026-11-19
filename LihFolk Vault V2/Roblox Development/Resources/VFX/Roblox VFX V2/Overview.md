@@ -10,9 +10,9 @@ researched: 2026-11-19
 > - Browser simulator (`sim/vfxsim.js` + `sim/vfxrender.js`, three.js) of ParticleEmitter, Beam, Trail, Part/MeshPart...
 > - Harvest: free pack in your inventory -> Studio place -> payload.py harvest + recipe_server.py -> recipe JSON in your library...
 > - Claude Code is required. The skill is written as instructions for Claude, so there is no stand-alone app or Studio plugin.
-> - Continue with Prerequisites.
+> - Runtime layer (`src/shared/VFX/`): quality presets, an effect runner with culling, caps and cleanup, `CameraGuard` (fixes the...
 >
-> Cost: TL;DR ~140 tok · whole note ~1.6k tok. Read more: ## Main features (from the repo) · ## Limits to know up front
+> Cost: TL;DR ~170 tok · whole note ~1.8k tok. Read more: ## Main features (from the repo) · ## Limits to know up front
 <!-- tldr:end -->
 
 Part of [[Roblox VFX V2]]. Next: [[Roblox VFX V2/Prerequisites|Prerequisites]] · [[Roblox VFX V2/Installation|Installation]]
@@ -78,5 +78,15 @@ Harvest: free pack in your inventory -> Studio place -> payload.py harvest + rec
 | `skills/roblox-vfx/references/` | `VFXKit.lua` (runtime template), `HitSystem.luau`, `CharacterVFX.server.lua`, design, styles, beats, the measured corpus |
 | `skills/roblox-vfx/sim/` | Simulator, workbench server, 3 worked effects, texture and mesh generators, gate tools |
 | `skills/roblox-vfx/scripts/` | Harvester and export scripts; `scripts/luau/` holds the Luau bodies they assemble |
+
+## What we built on top (games/vfx-lab)
+
+The skill is used as shipped. Our additions live in the repo's `games/vfx-lab/` and fix or work around what testing found:
+- **Runtime layer** (`src/shared/VFX/`): quality presets, an effect runner with culling, caps and cleanup, `CameraGuard` (fixes the stuck camera after cinematic kits) and `KitRunner`.
+- **Multiplayer modules** (`VFXServer` / `VFXClient`): state effects via attributes, one-shots via a server-only cue remote.
+- **Library and tooling**: recipes authored with all 31 properties, an asset manifest that uploads only what is used and replaces the missing `sync_vt.py`, sim previews, and one `check.sh`.
+- **Snatch the Sun prototypes**: `SunAura`, `SunBurst`, `SunVictory`.
+
+Details: [[Roblox VFX V2/Integration|Integration]] and [[Roblox VFX V2/Test Lab|Test Lab]].
 
 Continue with [[Roblox VFX V2/Prerequisites|Prerequisites]].

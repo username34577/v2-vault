@@ -1,0 +1,16 @@
+{
+ "textures": [
+  "sim:beam_paint__vt",
+  "sim:eclipse_paint",
+  "sim:impact_burst_4x4",
+  "sim:impact_star4_2x2",
+  "sim:ring_paint_4x4",
+  "sim:slash_paint_4x4",
+  "sim:slash_paint_b_4x4",
+  "sim:slash_paint_rim_4x4",
+  "sim:smoke_wisp_4x4",
+  "sim:spark_needle",
+  "sim:wind_swirl_4x4"
+ ],
+ "meshes": []
+}

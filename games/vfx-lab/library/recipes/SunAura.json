@@ -1,0 +1,371 @@
+{
+ "name": "SunAura",
+ "note": "Snatch the Sun: glow around the sun carrier. Continuous; build on the carrier's HumanoidRootPart.",
+ "duration": 1.0,
+ "texture_portable": true,
+ "texture_refs": [
+  "rbxasset://textures/particles/smoke_main.dds",
+  "rbxasset://textures/particles/sparkles_main.dds"
+ ],
+ "layers": [
+  {
+   "name": "Corona",
+   "class": "ParticleEmitter",
+   "offset": [
+    0,
+    0,
+    0
+   ],
+   "emit": {
+    "mode": "continuous"
+   },
+   "props": {
+    "Acceleration": {
+     "Vector3": [
+      0,
+      0,
+      0
+     ]
+    },
+    "Brightness": 1,
+    "Color": {
+     "ColorSequence": [
+      [
+       0,
+       [
+        1.0,
+        0.9647,
+        0.8471
+       ]
+      ],
+      [
+       0.4,
+       [
+        1.0,
+        0.7843,
+        0.2392
+       ]
+      ],
+      [
+       1,
+       [
+        1.0,
+        0.5412,
+        0.1647
+       ]
+      ]
+     ]
+    },
+    "Drag": 0,
+    "EmissionDirection": {
+     "Enum": "NormalId.Top"
+    },
+    "Enabled": true,
+    "FlipbookFramerate": {
+     "NumberRange": [
+      1,
+      1
+     ]
+    },
+    "FlipbookLayout": {
+     "Enum": "ParticleFlipbookLayout.None"
+    },
+    "FlipbookMode": {
+     "Enum": "ParticleFlipbookMode.Loop"
+    },
+    "FlipbookStartRandom": false,
+    "Lifetime": {
+     "NumberRange": [
+      0.7,
+      0.9
+     ]
+    },
+    "LightEmission": 0.8,
+    "LightInfluence": 0,
+    "LockedToPart": true,
+    "Orientation": {
+     "Enum": "ParticleOrientation.FacingCamera"
+    },
+    "Rate": 8,
+    "RotSpeed": {
+     "NumberRange": [
+      -30,
+      30
+     ]
+    },
+    "Rotation": {
+     "NumberRange": [
+      0,
+      360
+     ]
+    },
+    "Shape": {
+     "Enum": "ParticleEmitterShape.Box"
+    },
+    "ShapeInOut": {
+     "Enum": "ParticleEmitterShapeInOut.Outward"
+    },
+    "ShapeStyle": {
+     "Enum": "ParticleEmitterShapeStyle.Volume"
+    },
+    "Size": {
+     "NumberSequence": [
+      [
+       0,
+       3,
+       0
+      ],
+      [
+       0.5,
+       3.8,
+       0
+      ],
+      [
+       1,
+       4.2,
+       0
+      ]
+     ]
+    },
+    "SpreadAngle": {
+     "Vector2": [
+      180,
+      180
+     ]
+    },
+    "Speed": {
+     "NumberRange": [
+      0.4,
+      1
+     ]
+    },
+    "Squash": {
+     "NumberSequence": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ]
+     ]
+    },
+    "Texture": "rbxasset://textures/particles/smoke_main.dds",
+    "TimeScale": 1,
+    "Transparency": {
+     "NumberSequence": [
+      [
+       0,
+       1,
+       0
+      ],
+      [
+       0.2,
+       0.45,
+       0
+      ],
+      [
+       0.7,
+       0.6,
+       0
+      ],
+      [
+       1,
+       1,
+       0
+      ]
+     ]
+    },
+    "VelocityInheritance": 0,
+    "ZOffset": 1.5,
+    "WindAffectsDrag": false
+   }
+  },
+  {
+   "name": "Motes",
+   "class": "ParticleEmitter",
+   "offset": [
+    0,
+    0,
+    0
+   ],
+   "emit": {
+    "mode": "continuous"
+   },
+   "props": {
+    "Acceleration": {
+     "Vector3": [
+      0,
+      4,
+      0
+     ]
+    },
+    "Brightness": 1,
+    "Color": {
+     "ColorSequence": [
+      [
+       0,
+       [
+        1.0,
+        0.9647,
+        0.8471
+       ]
+      ],
+      [
+       1,
+       [
+        1.0,
+        0.7843,
+        0.2392
+       ]
+      ]
+     ]
+    },
+    "Drag": 2,
+    "EmissionDirection": {
+     "Enum": "NormalId.Top"
+    },
+    "Enabled": true,
+    "FlipbookFramerate": {
+     "NumberRange": [
+      1,
+      1
+     ]
+    },
+    "FlipbookLayout": {
+     "Enum": "ParticleFlipbookLayout.None"
+    },
+    "FlipbookMode": {
+     "Enum": "ParticleFlipbookMode.Loop"
+    },
+    "FlipbookStartRandom": false,
+    "Lifetime": {
+     "NumberRange": [
+      0.6,
+      0.9
+     ]
+    },
+    "LightEmission": 1,
+    "LightInfluence": 0,
+    "LockedToPart": false,
+    "Orientation": {
+     "Enum": "ParticleOrientation.FacingCamera"
+    },
+    "Rate": 14,
+    "RotSpeed": {
+     "NumberRange": [
+      0,
+      0
+     ]
+    },
+    "Rotation": {
+     "NumberRange": [
+      0,
+      0
+     ]
+    },
+    "Shape": {
+     "Enum": "ParticleEmitterShape.Box"
+    },
+    "ShapeInOut": {
+     "Enum": "ParticleEmitterShapeInOut.Outward"
+    },
+    "ShapeStyle": {
+     "Enum": "ParticleEmitterShapeStyle.Volume"
+    },
+    "Size": {
+     "NumberSequence": [
+      [
+       0,
+       0.55,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ]
+     ]
+    },
+    "SpreadAngle": {
+     "Vector2": [
+      180,
+      180
+     ]
+    },
+    "Speed": {
+     "NumberRange": [
+      4,
+      6
+     ]
+    },
+    "Squash": {
+     "NumberSequence": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       0,
+       0
+      ]
+     ]
+    },
+    "Texture": "rbxasset://textures/particles/sparkles_main.dds",
+    "TimeScale": 1,
+    "Transparency": {
+     "NumberSequence": [
+      [
+       0,
+       0,
+       0
+      ],
+      [
+       0.7,
+       0.2,
+       0
+      ],
+      [
+       1,
+       1,
+       0
+      ]
+     ]
+    },
+    "VelocityInheritance": 0,
+    "ZOffset": 0,
+    "WindAffectsDrag": false
+   }
+  },
+  {
+   "name": "Glow",
+   "class": "PointLight",
+   "offset": [
+    0,
+    0,
+    0
+   ],
+   "emit": {
+    "mode": "constant"
+   },
+   "props": {
+    "Brightness": 1.6,
+    "Color": {
+     "Color3": [
+      1.0,
+      0.7843,
+      0.2392
+     ]
+    },
+    "Enabled": true,
+    "Range": 14,
+    "Shadows": false
+   }
+  }
+ ]
+}

@@ -14,7 +14,7 @@ researched: 2026-11-19
 > - Blender 4.x. Note the full path to `blender.exe` (usually under `C:/Program Files/Blender Foundation/Blender <version>/`).
 > - Lune through Rokit or Aftman, in a tools folder whose `rokit.toml` / `aftman.toml` lists it.
 >
-> Cost: TL;DR ~160 tok · whole note ~1.2k tok. Read more: ## What the repo asks for · ## What this cloud session found and did (2026-11-19) · ## Your Windows PC checklist
+> Cost: TL;DR ~160 tok · whole note ~1.4k tok. Read more: ## What the repo asks for · ## What the cloud session found and did (2026-11-19, two passes) · ## Your Windows PC checklist
 <!-- tldr:end -->
 
 Part of [[Roblox VFX V2]]. Previous: [[Roblox VFX V2/Overview|Overview]] · Next: [[Roblox VFX V2/Installation|Installation]]
@@ -34,9 +34,9 @@ Part of [[Roblox VFX V2]]. Previous: [[Roblox VFX V2/Overview|Overview]] · Next
 | **Roblox Open Cloud API key** in an environment variable | Only if a script uploads assets for you. Only the variable's NAME goes in `LOCAL.md`, never the key | Optional |
 | A Roblox account that **owns** the packs you harvest | `InsertService` refuses assets you have not taken, even free ones | Harvest route only |
 
-Not required: Rojo (any project layout works; see [[Roblox VFX V2/Integration|Integration]] for a Rojo layout), any paid service, or a sign-up.
+Not required by the skill: Rojo (any project layout works), any paid service, or a sign-up. **Our lab** (`games/vfx-lab`, [[Roblox VFX V2/Test Lab|Test Lab]]) uses Rojo, and its sim previews use Playwright with Chromium.
 
-## What this cloud session found and did (2026-11-19)
+## What the cloud session found and did (2026-11-19, two passes)
 
 | Prerequisite | Before | Action | After |
 |---|---|---|---|
@@ -46,9 +46,12 @@ Not required: Rojo (any project layout works; see [[Roblox VFX V2/Integration|In
 | Pillow | 12.3.0 | none | OK |
 | scipy | missing | `pip install --user scipy` | **1.18.1 installed** and imported |
 | Node.js | v22.23.5 | none | OK, ran `studio_kit.js` and `phys_audit.js` |
-| Blender | missing | not installed: a large system install, and the mesh steps are better run on your PC | **Missing here** |
+| Blender | missing | investigated: no apt package; only `bpy` (Blender as a Python module) 5.x wheels exist for Python 3.13, while the repo targets Blender 4.x. Not installed (about 400 MB, unverified version), and no shipped effect needs meshes yet | **Missing here**: meshes and props not generated |
 | Lune / Rokit / Aftman | missing | not installed: binary downloads from GitHub are blocked in this environment | **Missing here** |
-| Roblox Studio + MCP | not reachable from the cloud | none possible | **Needs your PC** |
+| Roblox Studio + MCP | checked: no Studio MCP tools in the session, no shared computer folder | none possible | **Not configured here**: Studio work runs on your PC |
+| Texture library | not built | `make_textures`, `make_magic_tex`, `make_painted`, `lib/build_library.py`, `lib/check_library.py` | **Built**: 2,570 textures, 0 errors, 0 QA issues (217 MB) |
+| Playwright + Chromium | preinstalled | used for `tools/render_previews.js` | OK |
+| three.js r128 | the sim loads it from cdnjs, which was blocked | `npm pack three@0.128.0` into scratch space, served to the page by Playwright | OK for previews (not installed anywhere permanent) |
 
 The cloud container is temporary: the installed skill, scipy and the generated textures are lost when it is recycled. For lasting use, install on your PC ([[Roblox VFX V2/Installation|Installation]]).
 

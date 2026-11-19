@@ -12,14 +12,14 @@ researched: 2026-11-19
 > - local VFXKit = require(ReplicatedStorage:WaitForChild("VFXKit"))
 > - After `node sim/studio_kit.js sim/effects/eclipse_rend.json out`, put `out/eclipse_rend.luau` in Studio as a ModuleScript...
 >
-> Cost: TL;DR ~130 tok · whole note ~3.5k tok. Read more: ## 1. A recipe that passes the verifier · ## 7. Server decides, every client renders
+> Cost: TL;DR ~130 tok · whole note ~4.3k tok. Read more: ## 1. A recipe that passes the verifier · ## 9. Snatch the Sun wiring
 <!-- tldr:end -->
 
 Part of [[Roblox VFX V2]]. Previous: [[Roblox VFX V2/API Reference|API Reference]] · Next: [[Roblox VFX V2/Integration|Integration]]
 
 Every call below uses the API exactly as it exists in the repo ([[Roblox VFX V2/API Reference|API Reference]]). Recipe and kit names such as `DemoSparkBurst` and `EclipseRend` are examples: use names from **your** emitted `VFXKit` or your exported kits.
 
-**Status:** the recipe in example 1 passed `verify_vfx.py` and `emit_luau.py` built a `VFXKit` from it (2026-11-19, cloud). The Luau examples were syntax-checked only. **None has run in Studio yet.**
+**Status (2026-11-19):** the recipe in example 1 and the Snatch the Sun recipes in example 9 pass `verify_vfx.py`, and `emit_luau.py` built `VFXKit` from them. The Luau examples were syntax-checked, and the lab code they mirror passed the vault's Roblox API check. **None has run in Studio yet.**
 
 ## 1. A recipe that passes the verifier
 
@@ -518,23 +518,34 @@ playMove(root.CFrame * CFrame.new(0, -3, 0), character, nil)
 
 `origin` is the effect's floor point: the sim authors effects around a caster standing at the origin, so pass the floor under the caster, facing the way the move should go.
 
-## 6. Cinematic ultimate with the camera, then give the camera back
+## 6. Cinematic ultimate with a guarded camera
 
-`M.play` takes the camera (`Scriptable`) when the effect defines one and does not restore it. For an ultimate where you want the kit's camera:
+`M.play` takes the camera (`Scriptable`) when the effect defines one and never gives it back. Use our `KitRunner` + `CameraGuard` (in `games/vfx-lab/src/shared/VFX`): one cinematic owns the camera at a time, and it comes back after `DURATION + 0.5` s, on death or respawn, or at a safety timeout, even if the effect errors.
 
 ```lua
-local function playUltimate(Kit, template, origin: CFrame, caster: Model)
-	local camera = workspace.CurrentCamera
-	local previousFov = camera.FieldOfView
-	local h = Kit.spawn(origin, template) -- screen pieces on
-	h.caster = caster
-	Kit.play(h)
-	task.delay(Kit.DURATION, function()
-		camera.CameraType = Enum.CameraType.Custom
-		camera.FieldOfView = previousFov
-	end)
+-- LocalScript: the local player's own ultimate
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VFX = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("VFX")
+local KitRunner = require(VFX:WaitForChild("KitRunner"))
+local Assets = require(VFX:WaitForChild("Assets"))
+local EclipseRend = require(VFX:WaitForChild("Kits"):WaitForChild("EclipseRend"))
+
+local templates = ReplicatedStorage:WaitForChild("VFXTemplates")
+local template = KitRunner.prepare(EclipseRend, templates, Assets) -- at join (yields)
+
+local function castUltimate(origin: CFrame, caster: Model)
+	if not template then
+		return
+	end
+	-- cinematic = true: camera only if the quality preset allows it and nobody else owns it
+	local h, gotCamera = KitRunner.play(EclipseRend, template, origin, { caster = caster, cinematic = true })
+	if h and not gotCamera then
+		print("played without screen effects (camera busy or quality Low)")
+	end
 end
 ```
+
+For moves another player casts, call `KitRunner.play(Kit, template, origin)` with no `cinematic`: same effect, nobody's screen touched.
 
 ## 7. Server decides, every client renders
 
@@ -598,5 +609,53 @@ python scripts/emit_luau.py --lib "<game>/vfx/recipes" "<game>/src/shared/VFXKit
 ```
 
 Then call `VFXKit.build("SplashHit", part)` in the game: the game calls an effect by its role, not by its pack name.
+
+## 9. Snatch the Sun wiring
+
+The three Snatch the Sun effects are VFXKit recipes in `games/vfx-lab/library/recipes/` (made by `tools/author_recipes.py`, stock textures only, so nothing to upload). In the sim, after tuning: `SunAura` holds about 16 live particles with one constant light; `SunBurst` peaks at 25 particles with one light pulse; `SunVictory` peaks at 56 particles, once per round. **Not yet seen in Studio.**
+
+| Cue | Recipe | Layers | Fired by |
+|---|---|---|---|
+| `CarryingSun` (state) | `SunAura` | Corona (soft glow in front of the carrier), Motes (rising sparkles), Glow (PointLight, Range 14, kept on Low) | `VFXServer.setCarrying(model, on)` |
+| `SunBurst` (one-shot) | `SunBurst` | Flash (1 hard star, 0.12-0.15 s), Puff (4 clouds), Sparks (20), Pulse light | `VFXServer.oneShot("SunBurst", position, power)` |
+| `SunVictory` (one-shot) | `SunVictory` | Fountain (30 gold), Confetti (12 sky-blue), Stars (6), Dome (8 soft puffs), Pulse light | `VFXServer.oneShot("SunVictory", feet, 1)` |
+
+Server gameplay code (after it has validated the steal or ended the round):
+
+```lua
+-- ServerScriptService: e.g. inside the game's round/sun module
+local VFXServer = require(script.Parent.VFXServer)
+
+local function onSunStolen(fromCharacter: Model?, toCharacter: Model, sunPosition: Vector3)
+	VFXServer.oneShot("SunBurst", sunPosition, 1.2)
+	if fromCharacter then
+		VFXServer.setCarrying(fromCharacter, false)
+	end
+	VFXServer.setCarrying(toCharacter, true)
+end
+
+local function onSunDropped(carrier: Model, sunPosition: Vector3)
+	VFXServer.setCarrying(carrier, false)
+	VFXServer.oneShot("SunBurst", sunPosition, 0.8)
+end
+
+local function onRoundWon(winner: Model)
+	local root = winner:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if root then
+		VFXServer.oneShot("SunVictory", root.Position - Vector3.new(0, 3, 0), 1)
+	end
+end
+
+return { onSunStolen = onSunStolen, onSunDropped = onSunDropped, onRoundWon = onRoundWon }
+```
+
+Client, once:
+
+```lua
+-- StarterPlayerScripts/Fx.client.luau
+require(script.Parent:WaitForChild("VFXClient")).start()
+```
+
+The Overload pulses (10, 20 and 30 s held) are not built yet. The natural next step is a `SunHeat` state attribute that rebuilds the aura with a higher `rate_mul` and `scale` per stage.
 
 Continue with [[Roblox VFX V2/Integration|Integration]].
