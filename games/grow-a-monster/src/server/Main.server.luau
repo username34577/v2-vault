@@ -2,6 +2,7 @@
 -- Rules (vault "Server Authority and Validation"): the client only says "throw", "buy <id>",
 -- or "equip <id>". Prices, growth, coins and cooldowns all live on the server.
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage.Shared.Config)
@@ -137,6 +138,7 @@ local function sendToPlot(player)
 		return
 	end
 	character:PivotTo(spawnCFrame(s))
+	FxRemote:FireClient(player, "Placed") -- client frames the camera on the monster now
 end
 
 local function onPlayerAdded(player)
@@ -162,6 +164,22 @@ local function onPlayerAdded(player)
 	local model = Monster.create(player, plot, plotGround[plot])
 	state[player] = { Profile = profile, Plot = plot, Monster = model, LastThrow = 0 }
 	updatePlotDecor(player, state[player], false)
+
+	-- Studio-only test hook: in the SERVER command bar run
+	--   game.Players.<Name>:SetAttribute("DebugSize", 30000)
+	-- Live servers ignore it, and client-side attribute changes never reach the server.
+	if RunService:IsStudio() then
+		player:GetAttributeChangedSignal("DebugSize"):Connect(function()
+			local value = tonumber(player:GetAttribute("DebugSize"))
+			local s = state[player]
+			if value and s and Data.get(player) then
+				s.Profile.Data.Size = math.max(1, value)
+				Monster.setSize(s.Monster, s.Profile.Data.Size)
+				updatePlotDecor(player, s, true)
+				publish(player)
+			end
+		end)
+	end
 	makeLeaderstats(player)
 	Monster.setSize(model, data.Size)
 	publish(player)

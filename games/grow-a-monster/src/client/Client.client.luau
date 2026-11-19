@@ -203,15 +203,8 @@ local function onCharacter(character)
 	if humanoid then
 		humanoid.CameraOffset = Config.CameraOffset
 	end
-	local root = character:WaitForChild("HumanoidRootPart", 5)
-	local start = root and root.Position
-	-- wait (up to 2 s) for the server to move us onto the plot, then frame
-	local t0 = os.clock()
-	while root and os.clock() - t0 < 2 and (root.Position - start).Magnitude < 1 do
-		task.wait()
-	end
-	task.wait(0.1)
-	frameMonster()
+	-- The camera is aimed when the server says it has put us on our plot ("Placed" cue below);
+	-- loading a save can take a while, so don't guess with a timer.
 end
 player.CharacterAdded:Connect(onCharacter)
 if player.Character then
@@ -297,6 +290,8 @@ FxRemote.OnClientEvent:Connect(function(kind, monster, foodId, extra)
 		if mine then
 			Tutorial.onBite()
 		end
+	elseif kind == "Placed" then
+		task.delay(0.15, frameMonster)
 	elseif kind == "Fell" then
 		Sound.play("Whoosh")
 		task.delay(0.1, frameMonster)
