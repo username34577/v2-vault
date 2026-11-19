@@ -11,6 +11,12 @@ local ThrowRemote = Remotes:WaitForChild("Throw")
 local BuyRemote = Remotes:WaitForChild("BuyFood")
 local EquipRemote = Remotes:WaitForChild("EquipFood")
 local NotifyRemote = Remotes:WaitForChild("Notify")
+local FxRemote = Remotes:WaitForChild("Fx")
+
+local Decor = require(script.Parent.Decor)
+local Sound = require(script.Parent.Sound)
+Decor.start()
+Sound.preload()
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -295,5 +301,30 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		or input.KeyCode == Enum.KeyCode.ButtonR2
 	then
 		throw()
+	end
+end)
+
+---------------------------------------------------------------------------
+-- Fell off the island: the server already put us back; fade + whoosh
+---------------------------------------------------------------------------
+local fadeGui = Instance.new("ScreenGui")
+fadeGui.Name = "Fade"
+fadeGui.IgnoreGuiInset = true
+fadeGui.DisplayOrder = 50
+fadeGui.ResetOnSpawn = false
+fadeGui.Parent = playerGui
+local fade = Instance.new("Frame")
+fade.Size = UDim2.fromScale(1, 1)
+fade.BackgroundColor3 = Config.Palette.Cream
+fade.BackgroundTransparency = 1
+fade.BorderSizePixel = 0
+fade.Active = false
+fade.Parent = fadeGui
+
+FxRemote.OnClientEvent:Connect(function(kind)
+	if kind == "Fell" then
+		Sound.play("Whoosh")
+		fade.BackgroundTransparency = 0
+		TweenService:Create(fade, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()
 	end
 end)

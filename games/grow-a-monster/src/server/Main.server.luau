@@ -7,6 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Config = require(ReplicatedStorage.Shared.Config)
 local Data = require(script.Parent.Data)
 local Monster = require(script.Parent.Monster)
+local World = require(script.Parent.World)
 
 ---------------------------------------------------------------------------
 -- Remotes (all created by the server, in one folder)
@@ -23,6 +24,7 @@ local ThrowRemote = remote("Throw") -- client -> server: no arguments
 local BuyRemote = remote("BuyFood") -- client -> server: foodId (string)
 local EquipRemote = remote("EquipFood") -- client -> server: foodId (string)
 local NotifyRemote = remote("Notify") -- server -> client: message text
+local FxRemote = remote("Fx") -- server -> client only: visual/sound cues ("Fell", ...)
 remotes.Parent = ReplicatedStorage
 
 ---------------------------------------------------------------------------
@@ -53,35 +55,9 @@ end
 ---------------------------------------------------------------------------
 -- Plots
 ---------------------------------------------------------------------------
-local plotsFolder = Instance.new("Folder")
-plotsFolder.Name = "Plots"
-plotsFolder.Parent = workspace
-
 local plotOwner = {} -- [index] = player
-local plotGround = {} -- [index] = CFrame (monster spot, facing the player's spawn)
-local plotSpawn = {} -- [index] = CFrame (where the player stands)
-
-for i = 1, Config.PlotCount do
-	local angle = (i - 1) / Config.PlotCount * math.pi * 2
-	local center = Vector3.new(math.cos(angle), 0, math.sin(angle)) * Config.PlotRingRadius
-	local inward = -center.Unit -- toward the middle of the map
-
-	local pad = Instance.new("Part")
-	pad.Name = `Plot{i}`
-	pad.Anchored = true
-	pad.Size = Vector3.new(Config.PlotSize, 1, Config.PlotSize)
-	pad.CFrame = CFrame.lookAt(center, center + inward) * CFrame.new(0, 0.5, 0)
-	pad.Color = Color3.fromRGB(90, 140, 70)
-	pad.Material = Enum.Material.Grass
-	pad.TopSurface = Enum.SurfaceType.Smooth
-	pad.Parent = plotsFolder
-
-	-- Monster stands toward the outer edge; player spawns toward the inner edge, facing it.
-	local monsterSpot = center - inward * (Config.PlotSize * 0.15) + Vector3.new(0, 1, 0)
-	local spawnSpot = center + inward * (Config.PlotSize * 0.38) + Vector3.new(0, 4, 0)
-	plotGround[i] = CFrame.lookAt(monsterSpot, Vector3.new(spawnSpot.X, monsterSpot.Y, spawnSpot.Z))
-	plotSpawn[i] = CFrame.lookAt(spawnSpot, Vector3.new(monsterSpot.X, spawnSpot.Y, monsterSpot.Z))
-end
+-- plotGround[i]: monster spot facing the player's spot; plotSpawn[i]: where the player stands
+local plotGround, plotSpawn = World.build()
 
 local function claimPlot(player)
 	for i = 1, Config.PlotCount do
@@ -163,6 +139,7 @@ local function onPlayerAdded(player)
 	end
 
 	local data = profile.Data
+	World.setPlotOwner(plot, player)
 	local model = Monster.create(player, plot, plotGround[plot])
 	state[player] = { Profile = profile, Plot = plot, Monster = model, LastThrow = 0 }
 	makeLeaderstats(player)
@@ -205,6 +182,7 @@ local function onPlayerRemoving(player)
 			s.Monster:Destroy()
 		end
 		plotOwner[s.Plot] = nil
+		World.setPlotOwner(s.Plot, nil)
 	end
 	-- Data.lua saves and releases the profile on PlayerRemoving.
 end
@@ -316,6 +294,43 @@ task.spawn(function()
 			if Data.get(player) then
 				s.Profile.Data.Coins += incomePerSecond(s.Profile.Data.Size)
 				publish(player)
+			end
+		end
+	end
+end)
+
+---------------------------------------------------------------------------
+-- Server leaderboard board in the hub
+---------------------------------------------------------------------------
+task.spawn(function()
+	while true do
+		local entries = {}
+		for player, s in state do
+			if Data.get(player) then
+				table.insert(entries, { Name = player.DisplayName, Size = s.Profile.Data.Size })
+			end
+		end
+		table.sort(entries, function(a, b)
+			return a.Size > b.Size
+		end)
+		World.setLeaderboard(entries)
+		task.wait(Config.Leaderboard.RefreshSeconds)
+	end
+end)
+
+---------------------------------------------------------------------------
+-- Fall safety: fell off the island -> back on your own plot, no death
+---------------------------------------------------------------------------
+task.spawn(function()
+	while true do
+		task.wait(Config.Map.FallCheckInterval)
+		for player, s in state do
+			local character = player.Character
+			local root = character and character:FindFirstChild("HumanoidRootPart")
+			if root and root.Position.Y < Config.Map.FallY then
+				root.AssemblyLinearVelocity = Vector3.zero
+				character:PivotTo(plotSpawn[s.Plot])
+				FxRemote:FireClient(player, "Fell")
 			end
 		end
 	end
