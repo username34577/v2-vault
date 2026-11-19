@@ -176,6 +176,48 @@ task.spawn(function()
 	Hud.setMonsterColor(colors.Body)
 end)
 
+-- Spawn framing: the default camera looks down at your character, which hides a big monster's
+-- face under the top HUD. Once the server has put us on our plot, look level at the monster's middle.
+local function frameMonster()
+	local monster = myMonster()
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	local ground = monster and monster:GetAttribute("Ground")
+	if not root or typeof(ground) ~= "CFrame" then
+		return
+	end
+	local scale = Config.scaleForSize(monster:GetAttribute("MonsterSize") or 1)
+	local target = ground.Position + Vector3.new(0, 3.3 * scale, 0) -- body centre
+	local flat = (root.Position - target) * Vector3.new(1, 0, 1)
+	if flat.Magnitude < 1 then
+		return
+	end
+	-- The camera module keeps this angle and re-centres on the (raised) focus point.
+	local camPos = root.Position + flat.Unit * 12 + Vector3.new(0, 5, 0)
+	workspace.CurrentCamera.CFrame = CFrame.lookAt(camPos, target)
+end
+
+local function onCharacter(character)
+	-- Raise the camera's focus above the head so your character doesn't cover the monster's mouth.
+	local humanoid = character:WaitForChild("Humanoid", 5)
+	if humanoid then
+		humanoid.CameraOffset = Config.CameraOffset
+	end
+	local root = character:WaitForChild("HumanoidRootPart", 5)
+	local start = root and root.Position
+	-- wait (up to 2 s) for the server to move us onto the plot, then frame
+	local t0 = os.clock()
+	while root and os.clock() - t0 < 2 and (root.Position - start).Magnitude < 1 do
+		task.wait()
+	end
+	task.wait(0.1)
+	frameMonster()
+end
+player.CharacterAdded:Connect(onCharacter)
+if player.Character then
+	task.spawn(onCharacter, player.Character)
+end
+
 -- "Too far" hint follows the player around.
 task.spawn(function()
 	while true do
@@ -257,6 +299,7 @@ FxRemote.OnClientEvent:Connect(function(kind, monster, foodId, extra)
 		end
 	elseif kind == "Fell" then
 		Sound.play("Whoosh")
+		task.delay(0.1, frameMonster)
 		fade.BackgroundTransparency = 0
 		TweenService:Create(fade, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()
 	end

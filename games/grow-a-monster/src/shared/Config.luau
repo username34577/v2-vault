@@ -166,9 +166,9 @@ Config.Map = {
 	MonsterZ = 6, -- the monster's stage, a little past the plot centre
 	StageHeight = 1.4, -- the stage the monster stands on
 	StageDiameter = 24,
-	SpawnGap = 13, -- studs between the monster's front and where the player stands
+	SpawnGap = 18, -- studs between the monster's front and where the player stands
 	SpawnMinZ = -28, -- never put the player closer to the gate than this
-	CrateLocal = Vector3.new(11, 0, -16), -- food crate beside the player
+	CrateLocal = Vector3.new(15, 0, -6), -- food crate off to the side, clear of the HUD
 	TreeCount = 8, -- one between each pair of plots
 	RimBushes = 18,
 	RimFlowers = 22,
@@ -254,6 +254,9 @@ Config.Feel = {
 	BumpMaxFov = 5,
 	ScreenBump = true, -- set false to turn the bump off for everyone
 }
+
+-- Camera looks over your head (studs above the default focus) so the monster's mouth stays in view
+Config.CameraOffset = Vector3.new(0, 3.5, 0)
 
 Config.Tutorial = {
 	MaxStartSize = 10, -- show the hint only to monsters this small (new players)

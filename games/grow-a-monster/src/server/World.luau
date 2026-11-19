@@ -17,6 +17,7 @@ local TAU = math.pi * 2
 local World = {}
 
 local signs = {} -- [plotIndex] = { { Name = TextLabel, Sub = TextLabel }, ... }
+local plotInfo = {} -- [plotIndex] = { CF, Top, Half, Model, Level, Decor }
 local boardFaces = {} -- list of { rows = { { Frame, Rank, Name, Size } } }
 
 local SOLID = { CanCollide = true, CanQuery = true, CastShadow = false }
@@ -429,50 +430,178 @@ local function buildPlot(i, folder, rng)
 
 	buildFence(model, plotCF, top)
 
-	-- Feeding spot under the monster and a throw mat where the player stands.
-	local monsterLocal = Vector3.new(0, 0, S * 0.15)
-	local spawnLocal = Vector3.new(0, 0, -S * 0.38)
-	local d = M.FeedingPadDiameter
-	Build.cylinder(d + 2.4, 0.2, P.Mint, plotCF * CFrame.new(monsterLocal + Vector3.new(0, top + 0.1, 0)), model)
-	Build.cylinder(d, 0.3, P.Cream, plotCF * CFrame.new(monsterLocal + Vector3.new(0, top + 0.15, 0)), model)
-	Build.cylinder(8, 0.25, P.Peach, plotCF * CFrame.new(spawnLocal + Vector3.new(0, top + 0.12, 0)), model)
-	Build.cylinder(6.2, 0.3, P.Cream, plotCF * CFrame.new(spawnLocal + Vector3.new(0, top + 0.15, 0)), model)
-
-	-- Giant flowers in the corners, rocks at the back, tufts along the edges.
 	local half = S / 2 - M.FenceInset
-	local inset = half - 5
-	local corners = { Vector3.new(-inset, 0, -inset), Vector3.new(inset, 0, -inset), Vector3.new(inset, 0, inset), Vector3.new(-inset, 0, inset) }
-	for k, c in corners do
-		local ground = plotCF * CFrame.new(c + Vector3.new(0, top, 0)) * CFrame.Angles(0, rng:NextNumber() * TAU, 0)
-		Props.flower(model, ground, 1.45, Props.PetalColors[((i + k) % #Props.PetalColors) + 1])
-		Props.tuft(model, ground * CFrame.new(3, 0, 1), 1.1, Props.PetalColors[((i + k + 2) % #Props.PetalColors) + 1])
+	local function at(x, y, z)
+		return plotCF * CFrame.new(x, top + y, z)
 	end
+
+	-- Monster stage: a chunky round wooden bed with a cream top and sunny studs round the rim.
+	local mz = M.MonsterZ
+	local SD, SH = M.StageDiameter, M.StageHeight
+	Build.cylinder(SD + 2, SH * 0.6, P.WoodDark, at(0, SH * 0.3, mz), model, SOLID_SHADOW)
+	Build.cylinder(SD, SH, P.Wood, at(0, SH / 2 + 0.05, mz), model, SOLID)
+	Build.cylinder(SD - 2.6, 0.3, P.Cream, at(0, SH + 0.15, mz), model, SOLID)
+	Build.cylinder(SD - 1.2, 0.2, P.Mint, at(0, SH + 0.08, mz), model)
+	for k = 1, 12 do
+		local a = k / 12 * TAU
+		Build.ball(1.3, if k % 2 == 0 then P.Sunny else P.Bubblegum, at(math.cos(a) * (SD / 2 - 0.1), SH * 0.55, mz + math.sin(a) * (SD / 2 - 0.1)), model)
+	end
+
+	-- A stepping-stone path from the gate to the stage.
+	for k = 0, 5 do
+		local z = -half + 3 + k * 5
+		Build.cylinder(3.6 - (k % 2) * 0.6, 0.25, P.Cream, at((k % 2 - 0.5) * 1.6, 0.12, z), model)
+	end
+
+	-- Food crate beside the player (the "pantry"; Snack Thief will raid it later).
+	local cl = M.CrateLocal
+	Props.crate(model, at(cl.X, 0, cl.Z) * CFrame.Angles(0, math.rad(-20), 0), 1)
+
+	-- Flowers only at the BACK corners so nothing blocks the camera at spawn; low tufts at the front.
 	for _, sx in { -1, 1 } do
-		Props.rock(model, plotCF * CFrame.new(sx * (half - 13), top, half - 4.5), 1.1, rng:NextNumber() * TAU)
+		local ground = at(sx * (half - 5), 0, half - 5) * CFrame.Angles(0, rng:NextNumber() * TAU, 0)
+		Props.flower(model, ground, 1.45, Props.PetalColors[((i + sx) % #Props.PetalColors) + 1])
+		Props.tuft(model, ground * CFrame.new(3, 0, 1), 1.1, Props.PetalColors[((i + 2) % #Props.PetalColors) + 1])
+		Props.tuft(model, at(sx * (half - 4), 0, -half + 4), 1, Props.PetalColors[((i + 3) % #Props.PetalColors) + 1])
+		Props.rock(model, at(sx * (half - 14), 0, half - 4.5), 1.1, rng:NextNumber() * TAU)
 	end
 	for k = 1, 8 do
 		local edgeX = if k % 2 == 0 then 1 else -1
 		local z = rng:NextNumber(-half + 10, half - 10)
 		local x = edgeX * rng:NextNumber(half - 4, half - 2)
-		Props.tuft(model, plotCF * CFrame.new(x, top, z), 1, Props.PetalColors[(k % #Props.PetalColors) + 1])
+		Props.tuft(model, at(x, 0, z), 1, Props.PetalColors[(k % #Props.PetalColors) + 1])
 	end
 
-	-- Owner sign outside the gate, readable from the path and from inside the plot.
-	local signX = -(M.GateWidth / 2 + 7)
-	local signZ = -half - 4
-	for _, sx in { -3.8, 3.8 } do
-		Build.cylinder(0.9, 7.4, P.WoodDark, plotCF * CFrame.new(signX + sx, 3.7, signZ), model, SOLID_SHADOW)
+	-- Gate: an arch over the opening with the owner's name (both sides), and two doors swung open.
+	local gate = M.GateWidth / 2
+	local archY = M.FenceHeight + 5.5
+	for _, sx in { -1, 1 } do
+		Build.cylinder(1.6, archY + 1, P.WoodDark, at(sx * (gate + 0.2), (archY + 1) / 2, -half), model, SOLID_SHADOW)
+		-- door: a little picket panel hinged on the gate post, swung 70 degrees inward
+		local hinge = at(sx * gate, 0, -half) * CFrame.Angles(0, sx * math.rad(70), 0)
+		local doorW = gate - 1
+		for p = 0, 3 do
+			local px = -sx * (0.9 + p * (doorW - 1) / 3)
+			Build.block(Vector3.new(0.9, 3.4, 0.5), P.WoodLight, hinge * CFrame.new(px, 1.9, 0), model)
+			Build.ball(0.9, P.WoodLight, hinge * CFrame.new(px, 3.6, 0), model)
+		end
+		for _, h in { 1.2, 2.8 } do
+			Build.block(Vector3.new(doorW, 0.5, 0.4), P.Wood, hinge * CFrame.new(-sx * doorW / 2, h, 0), model)
+		end
 	end
-	local board = Build.block(Vector3.new(11, 4.6, 0.7), P.Wood, plotCF * CFrame.new(signX, 5.4, signZ), model, SOLID_SHADOW)
+	local arch = Build.block(Vector3.new(M.GateWidth + 3, 4.2, 0.8), P.Wood, at(0, archY, -half), model, SOLID_SHADOW)
+	arch.Name = "Sign"
+	Build.block(Vector3.new(M.GateWidth + 5, 0.9, 1.4), P.WoodDark, at(0, archY + 2.5, -half), model)
+	for _, sx in { -1, 1 } do
+		Build.ball(2.2, P.Sunny, at(sx * (gate + 2.2), archY + 3.1, -half), model)
+	end
+
+	-- Owner sign in the back-left corner, turned to face the player's spot.
+	local signPos = Vector3.new(-(half - 7), 0, half - 9)
+	local facing = Vector3.new(0, 0, mz - Config.MinScale * Config.MonsterRadius - M.SpawnGap)
+	local signCF = plotCF * CFrame.lookAt(signPos, Vector3.new(facing.X, 0, facing.Z)) * CFrame.new(0, top, 0)
+	for _, sx in { -4.2, 4.2 } do
+		Build.cylinder(1, 11, P.WoodDark, signCF * CFrame.new(sx, 5.5, 0.2), model, SOLID_SHADOW)
+	end
+	local board = Build.block(Vector3.new(12, 5, 0.7), P.Wood, signCF * CFrame.new(0, 8.6, 0), model, SOLID_SHADOW)
 	board.Name = "Sign"
-	Build.block(Vector3.new(11.8, 0.7, 1), P.WoodDark, plotCF * CFrame.new(signX, 7.9, signZ), model)
-	signs[i] = { signGui(board, Enum.NormalId.Front), signGui(board, Enum.NormalId.Back) }
+	Build.block(Vector3.new(12.8, 0.7, 1), P.WoodDark, signCF * CFrame.new(0, 11.4, 0), model)
+	signs[i] = { signGui(arch, Enum.NormalId.Front), signGui(arch, Enum.NormalId.Back), signGui(board, Enum.NormalId.Front) }
 
-	local monsterPos = plotCF:PointToWorldSpace(monsterLocal) + Vector3.new(0, top + 0.3, 0)
-	local spawnPos = plotCF:PointToWorldSpace(spawnLocal) + Vector3.new(0, top + 3, 0)
-	local ground = CFrame.lookAt(monsterPos, Vector3.new(spawnPos.X, monsterPos.Y, spawnPos.Z))
-	local spawnCF = CFrame.lookAt(spawnPos, Vector3.new(monsterPos.X, spawnPos.Y, monsterPos.Z))
-	return ground, spawnCF
+	plotInfo[i] = { CF = plotCF, Top = top, Half = half, Model = model, Level = 0 }
+
+	local monsterPos = plotCF:PointToWorldSpace(Vector3.new(0, 0, mz)) + Vector3.new(0, top + SH + 0.3, 0)
+	local toHub = plotCF:PointToWorldSpace(Vector3.new(0, 0, -S))
+	local ground = CFrame.lookAt(monsterPos, Vector3.new(toHub.X, monsterPos.Y, toHub.Z))
+	-- Furthest the player can stand in front of the monster and still be inside the fence.
+	local reach = mz - M.SpawnMinZ
+	return ground, reach
+end
+
+---------------------------------------------------------------------------
+-- Plot decor that grows with the monster (Config.PlotDecor)
+---------------------------------------------------------------------------
+local decorBuilders = {}
+
+function decorBuilders.Flowerbeds(info, parent)
+	local h = info.Half
+	for _, sx in { -1, 1 } do
+		local x = sx * (h - 3.5)
+		Build.block(Vector3.new(4, 0.7, 30), Build.lerp(P.WoodDark, P.Wood, 0.2), info.CF * CFrame.new(x, info.Top + 0.3, -6), parent)
+		for k = 0, 9 do
+			local z = -20 + k * 3.1
+			Props.tuft(parent, info.CF * CFrame.new(x + (k % 2 - 0.5) * 1.6, info.Top + 0.6, z), 1.15, Props.PetalColors[(k % #Props.PetalColors) + 1])
+		end
+	end
+end
+
+function decorBuilders.Lanterns(info, parent)
+	for _, spot in { Vector3.new(-6, 0, -27), Vector3.new(6, 0, -27), Vector3.new(-16, 0, -6), Vector3.new(16, 0, -6) } do
+		Props.lantern(parent, info.CF * CFrame.new(spot + Vector3.new(0, info.Top, 0)), 1)
+	end
+end
+
+function decorBuilders.Bunting(info, parent)
+	local h = info.Half
+	local colors = { P.Bubblegum, P.Sunny, P.Mint, P.Sky, P.Lilac }
+	local runs = {
+		{ Vector3.new(-h, 0, -h), Vector3.new(-M.GateWidth / 2, 0, -h) },
+		{ Vector3.new(M.GateWidth / 2, 0, -h), Vector3.new(h, 0, -h) },
+		{ Vector3.new(-h, 0, -h), Vector3.new(-h, 0, h) },
+		{ Vector3.new(h, 0, -h), Vector3.new(h, 0, h) },
+	}
+	for r, run in runs do
+		local a, b = run[1], run[2]
+		local n = math.floor((b - a).Magnitude / 2.6)
+		for k = 1, n - 1 do
+			local p = a:Lerp(b, k / n)
+			local sag = math.sin(k / n * math.pi) * 0.9
+			local cf = info.CF * CFrame.lookAt(p, p + (b - a).Unit:Cross(Vector3.yAxis))
+			Build.block(Vector3.new(1.3, 1.3, 0.15), colors[(k + r) % #colors + 1], cf * CFrame.new(0, info.Top + M.FenceHeight + 1.2 - sag, 0) * CFrame.Angles(0, 0, math.rad(45)), parent)
+		end
+	end
+end
+
+function decorBuilders.Trees(info, parent)
+	for _, sx in { -1, 1 } do
+		Props.tree(parent, info.CF * CFrame.new(sx * (info.Half - 7), info.Top, -14), 0.75)
+	end
+end
+
+function decorBuilders.Statue(info, parent)
+	local base = info.CF * CFrame.new(info.Half - 8, info.Top, -info.Half + 8) * CFrame.Angles(0, math.rad(200), 0)
+	Build.cylinder(5.5, 2, P.RockLight, base * CFrame.new(0, 1, 0), parent, SOLID)
+	Build.cylinder(6.2, 0.6, P.Rock, base * CFrame.new(0, 0.3, 0), parent)
+	local gold = { Material = Enum.Material.Metal, Reflectance = 0.15 }
+	Build.ellipsoid(Vector3.new(4.6, 4, 4.2), P.Sunny, base * CFrame.new(0, 4, 0), parent, gold)
+	for _, ex in { -0.9, 0.9 } do
+		Build.ball(1.2, P.TextLight, base * CFrame.new(ex, 4.6, -1.9), parent)
+	end
+	Props.crown(parent, base * CFrame.new(0, 5.8, 0), 0.32)
+end
+
+function decorBuilders.Rainbow(info, parent)
+	local bands = { P.Coral, P.Tangerine, P.Sunny, P.Grass, P.Sky, P.Lilac }
+	local radius = info.Half - 3
+	local center = info.CF * CFrame.new(0, info.Top, info.Half - 1.5)
+	for b, color in bands do
+		local r = radius - (b - 1) * 1.6
+		local steps = 28
+		for k = 0, steps - 1 do
+			local a0 = k / steps * math.pi
+			local a1 = (k + 1) / steps * math.pi
+			local p0 = Vector3.new(math.cos(a0) * r, math.sin(a0) * r, 0)
+			local p1 = Vector3.new(math.cos(a1) * r, math.sin(a1) * r, 0)
+			local mid = (p0 + p1) / 2
+			local cf = CFrame.lookAt(mid, mid + Vector3.zAxis, (p1 - p0).Unit)
+			Build.block(Vector3.new(1.7, (p1 - p0).Magnitude + 0.15, 0.8), color, center * cf, parent)
+		end
+	end
+	for _, sx in { -1, 1 } do
+		for k = 0, 2 do
+			Build.ball(4.5 - k * 0.6, P.Cloud, center * CFrame.new(sx * (radius - 4) + k * 1.8 * sx, 1.3, (k - 1) * 1.4), parent)
+		end
+	end
 end
 
 ---------------------------------------------------------------------------
@@ -514,7 +643,8 @@ end
 -- Public API
 ---------------------------------------------------------------------------
 
--- Builds everything. Returns plotGround[i] (monster spot) and plotSpawn[i] (player spot).
+-- Builds everything. Returns plotGround[i] (monster spot, looking toward the gate) and
+-- plotReach[i] (furthest studs in front of the monster the player may stand).
 function World.build()
 	-- The Baseplate template's floor and spawn would poke through the island.
 	for _, name in { "Baseplate", "SpawnLocation" } do
@@ -534,14 +664,56 @@ function World.build()
 
 	local plots = Instance.new("Folder")
 	plots.Name = "Plots"
-	local plotGround, plotSpawn = {}, {}
+	local plotGround, plotReach = {}, {}
 	for i = 1, Config.PlotCount do
-		plotGround[i], plotSpawn[i] = buildPlot(i, plots, rng)
+		plotGround[i], plotReach[i] = buildPlot(i, plots, rng)
 		World.setPlotOwner(i, nil)
 	end
 	map.Parent = workspace
 	plots.Parent = workspace
-	return plotGround, plotSpawn
+	return plotGround, plotReach
+end
+
+-- How many Config.PlotDecor tiers a monster of this size has unlocked.
+function World.decorLevelFor(size: number): number
+	local level = 0
+	for k, tier in Config.PlotDecor do
+		if size >= tier.Size then
+			level = k
+		end
+	end
+	return level
+end
+
+-- Builds (or clears, with level 0) the decor tiers on a plot. Returns true if new tiers appeared.
+function World.setPlotLevel(index: number, level: number): boolean
+	local info = plotInfo[index]
+	if not info or info.Level == level then
+		return false
+	end
+	if level < info.Level then
+		if info.Decor then
+			info.Decor:Destroy()
+			info.Decor = nil
+		end
+		info.Level = 0
+	end
+	if not info.Decor then
+		info.Decor = Build.model("Decor", info.Model)
+	end
+	local grew = level > info.Level
+	for k = info.Level + 1, level do
+		local tier = Config.PlotDecor[k]
+		local builder = tier and decorBuilders[tier.Id]
+		if builder then
+			local tierModel = Instance.new("Model")
+			tierModel.Name = tier.Id
+			builder(info, tierModel)
+			tierModel.Parent = info.Decor
+		end
+	end
+	info.Level = level
+	return grew
 end
 
 function World.setPlotOwner(index: number, player: Player?)

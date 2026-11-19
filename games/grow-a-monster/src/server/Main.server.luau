@@ -56,8 +56,8 @@ end
 -- Plots
 ---------------------------------------------------------------------------
 local plotOwner = {} -- [index] = player
--- plotGround[i]: monster spot facing the player's spot; plotSpawn[i]: where the player stands
-local plotGround, plotSpawn = World.build()
+-- plotGround[i]: monster spot, looking toward the gate; plotReach[i]: furthest the player may stand
+local plotGround, plotReach = World.build()
 
 local function claimPlot(player)
 	for i = 1, Config.PlotCount do
@@ -75,7 +75,26 @@ end
 local state = {} -- [player] = { Profile, Plot, Monster, LastThrow, Coins, Size }
 
 local function incomePerSecond(size)
-	return math.floor(size * Config.IncomePerSize)
+	return math.max(Config.MinIncome, math.floor(size * Config.IncomePerSize))
+end
+
+-- Where the player stands: SpawnGap studs in front of the monster's current size, inside the fence,
+-- facing the monster (so the default camera behind them frames it).
+local function spawnCFrame(s)
+	local ground = plotGround[s.Plot]
+	local radius = Config.MonsterRadius * Config.scaleForSize(s.Profile.Data.Size)
+	local dist = math.min(radius + Config.Map.SpawnGap, plotReach[s.Plot])
+	local pos = (ground * CFrame.new(0, 0, -dist)).Position
+	pos = Vector3.new(pos.X, Config.Map.PlotTopY + 3, pos.Z)
+	return CFrame.lookAt(pos, Vector3.new(ground.Position.X, pos.Y, ground.Position.Z))
+end
+
+-- Grow the plot's decor when the monster reaches a new Config.PlotDecor size.
+local function updatePlotDecor(player, s, announce)
+	local level = World.decorLevelFor(s.Profile.Data.Size)
+	if World.setPlotLevel(s.Plot, level) and announce then
+		NotifyRemote:FireClient(player, `Your plot got {Config.PlotDecor[level].Name}!`)
+	end
 end
 
 -- Push the numbers the client needs to show (attributes replicate to everyone).
@@ -117,7 +136,7 @@ local function sendToPlot(player)
 	if not s or not character then
 		return
 	end
-	character:PivotTo(plotSpawn[s.Plot])
+	character:PivotTo(spawnCFrame(s))
 end
 
 local function onPlayerAdded(player)
@@ -142,6 +161,7 @@ local function onPlayerAdded(player)
 	World.setPlotOwner(plot, player)
 	local model = Monster.create(player, plot, plotGround[plot])
 	state[player] = { Profile = profile, Plot = plot, Monster = model, LastThrow = 0 }
+	updatePlotDecor(player, state[player], false)
 	makeLeaderstats(player)
 	Monster.setSize(model, data.Size)
 	publish(player)
@@ -183,6 +203,7 @@ local function onPlayerRemoving(player)
 		end
 		plotOwner[s.Plot] = nil
 		World.setPlotOwner(s.Plot, nil)
+		World.setPlotLevel(s.Plot, 0)
 	end
 	-- Data.lua saves and releases the profile on PlayerRemoving.
 end
@@ -232,6 +253,7 @@ ThrowRemote.OnServerEvent:Connect(function(player)
 		data.Size += food.Growth
 		data.Coins += food.Growth
 		Monster.setSize(s.Monster, data.Size)
+		updatePlotDecor(player, s, true)
 		publish(player)
 		FxRemote:FireAllClients("Eat", s.Monster, food.Id, food.Growth)
 	end)
@@ -330,7 +352,7 @@ task.spawn(function()
 			local root = character and character:FindFirstChild("HumanoidRootPart")
 			if root and root.Position.Y < Config.Map.FallY then
 				root.AssemblyLinearVelocity = Vector3.zero
-				character:PivotTo(plotSpawn[s.Plot])
+				character:PivotTo(spawnCFrame(s))
 				FxRemote:FireClient(player, "Fell")
 			end
 		end
