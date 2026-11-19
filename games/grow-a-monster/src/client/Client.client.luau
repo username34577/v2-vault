@@ -21,6 +21,8 @@ local FoodFlight = require(script.Parent.FoodFlight)
 local UI = require(script.Parent.UI)
 local Hud = require(script.Parent.Hud)
 local Shop = require(script.Parent.Shop)
+local Feel = require(script.Parent.Feel)
+local Tutorial = require(script.Parent.Tutorial)
 
 local player = Players.LocalPlayer
 
@@ -85,8 +87,11 @@ Hud.build({
 	onThrow = throw,
 	onShop = function()
 		Shop.toggle()
+		Tutorial.shopOpened()
 	end,
 })
+Feel.start(Hud)
+Tutorial.start(Hud, myMonster)
 
 Shop.build({
 	buy = function(foodId)
@@ -121,6 +126,9 @@ local function refreshAll()
 	end
 	local canBuy = Shop.refresh({ Coins = coins, Equipped = equipped, Owned = owned })
 	Hud.setShopBadge(canBuy and not Shop.isOpen())
+	if ready then
+		Tutorial.onCanBuy(canBuy)
+	end
 	if player:GetAttribute("Coins") ~= nil then
 		ready = true
 	end
@@ -141,6 +149,7 @@ player.AttributeChanged:Connect(function(name)
 	end
 	if id and player:GetAttribute(name) == true and owned[id] == false then
 		Sound.play("Purchase")
+		Feel.purchased()
 		Shop.confirm(id)
 	elseif name == "Equipped" then
 		Shop.confirm(player:GetAttribute("Equipped"))
@@ -195,6 +204,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		end
 	elseif input.KeyCode == Enum.KeyCode.ButtonY then
 		Shop.toggle()
+		Tutorial.shopOpened()
 	elseif input.KeyCode == Enum.KeyCode.ButtonB and Shop.isOpen() then
 		Shop.close()
 	end
@@ -219,8 +229,9 @@ local fade = UI.new("Frame", {
 	Active = false,
 }, fadeGui)
 
-MonsterView.onMilestone = function(_model, milestone, isMine)
+MonsterView.onMilestone = function(model, milestone, isMine)
 	if isMine then
+		Feel.milestone(model)
 		Sound.play("Milestone")
 		Hud.toast(`New look unlocked: {milestone.Name}!`, "good")
 	end
@@ -231,7 +242,13 @@ FxRemote.OnClientEvent:Connect(function(kind, monster, foodId, extra)
 		MonsterView.expect(monster, Config.FlightTime)
 		FoodFlight.launch(monster, foodId, extra)
 	elseif kind == "Eat" and typeof(monster) == "Instance" then
-		MonsterView.gulp(monster, tonumber(extra) or 1)
+		local growth = tonumber(extra) or 1
+		local mine = monster:GetAttribute("OwnerUserId") == player.UserId
+		MonsterView.gulp(monster, growth)
+		Feel.ate(monster, foodId, growth, mine)
+		if mine then
+			Tutorial.onBite()
+		end
 	elseif kind == "Fell" then
 		Sound.play("Whoosh")
 		fade.BackgroundTransparency = 0

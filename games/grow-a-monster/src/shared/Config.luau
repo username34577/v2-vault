@@ -219,6 +219,27 @@ Config.Monster = {
 }
 
 ---------------------------------------------------------------------------
+-- Game feel and the first 30 seconds
+---------------------------------------------------------------------------
+Config.Feel = {
+	NumberRise = 4.5, -- studs the "+X" floats up
+	NumberTime = 0.9, -- seconds on screen
+	CrumbCount = 10, -- particles when a monster eats
+	CoinFlyMax = 5, -- coins that fly to the counter per bite
+	CoinFlyTime = 0.55,
+	BumpMinGrowth = 10, -- foods this big (Cake and up) bump the screen
+	BumpFov = 2, -- field-of-view punch in degrees for the smallest bump
+	BumpMaxFov = 5,
+	ScreenBump = true, -- set false to turn the bump off for everyone
+}
+
+Config.Tutorial = {
+	MaxStartSize = 10, -- show the hint only to monsters this small (new players)
+	ThrowsToHide = 3, -- bites before the hint goes away
+	ShopNudgeSeconds = 6, -- how long the "buy better food" arrow stays
+}
+
+---------------------------------------------------------------------------
 -- Sounds: paste Creator Store audio IDs here (number or "rbxassetid://123").
 -- Empty or broken slots are skipped silently, so the game works before they're filled.
 ---------------------------------------------------------------------------
