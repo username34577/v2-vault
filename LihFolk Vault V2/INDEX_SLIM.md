@@ -1500,3 +1500,14 @@ One line per note: `title | path | tags | ~whole-note tokens`. Grep it for an AP
 - TweenService - Engine Reference Card | 62 Engine Reference Cards/TweenService - Engine Reference Card.md | reference, engine, tweenservice | ~1.2k tok
 - UserInputService - Engine Reference Card | 62 Engine Reference Cards/UserInputService - Engine Reference Card.md | reference, engine, userinputservice | ~1.4k tok
 - Workspace - Engine Reference Card | 62 Engine Reference Cards/Workspace - Engine Reference Card.md | reference, engine, workspace | ~1.3k tok
+
+## Roblox Development
+
+- API Reference | Roblox Development/Resources/VFX/Roblox VFX V2/API Reference.md | resources, vfx, tool, api, luau, roblox-vfx | ~2.5k tok
+- Examples | Roblox Development/Resources/VFX/Roblox VFX V2/Examples.md | resources, vfx, tool, examples, luau, roblox-vfx | ~3.5k tok
+- Installation | Roblox Development/Resources/VFX/Roblox VFX V2/Installation.md | resources, vfx, tool, setup, install, roblox-vfx | ~1.4k tok
+- Integration | Roblox Development/Resources/VFX/Roblox VFX V2/Integration.md | resources, vfx, tool, integration, studio, rojo, roblox-vfx | ~2.0k tok
+- Overview | Roblox Development/Resources/VFX/Roblox VFX V2/Overview.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~1.6k tok
+- Prerequisites | Roblox Development/Resources/VFX/Roblox VFX V2/Prerequisites.md | resources, vfx, tool, setup, roblox-vfx | ~1.2k tok
+- Roblox VFX V2 | Roblox Development/Resources/VFX/Roblox VFX V2/Roblox VFX V2.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~880 tok
+- Troubleshooting | Roblox Development/Resources/VFX/Roblox VFX V2/Troubleshooting.md | resources, vfx, tool, troubleshooting, debugging, roblox-vfx | ~2.0k tok

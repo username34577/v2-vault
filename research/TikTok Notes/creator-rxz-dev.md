@@ -47,3 +47,6 @@ tags: [tiktok, creator, anti-slop, skills]
 
 ## Worth it?
 Good framing (skills + memory + better prompt), nothing the vault doesn't already do. Only grab his Discord files if you want to compare; read any skill before installing it.
+
+## Update 2026-11-19: his VFX skill is public
+rxz's **Roblox VFX v2** skill is on GitHub: https://github.com/1nird/roblox-vfx-v2 (free, not for resale). Researched, installed and documented in `LihFolk Vault V2/Roblox Development/Resources/VFX/Roblox VFX V2/` (start at the note *Roblox VFX V2*).
