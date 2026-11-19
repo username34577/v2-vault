@@ -1,0 +1,291 @@
+{
+  "status": "completed",
+  "meta": {
+    "players": [
+      "SparkingDev33"
+    ],
+    "startedAt": "2026-11-19T22:18:47Z",
+    "args": {
+      "suite": "local"
+    },
+    "place": "Game",
+    "placeId": 0,
+    "durationS": 69,
+    "savedAt": "2026-11-19T14:20:30-08:00",
+    "commit": "1b1ee63"
+  },
+  "suite": "local",
+  "schema": 1,
+  "results": [
+    {
+      "test": "env",
+      "status": "INFO",
+      "check": "client",
+      "detail": {
+        "device": "desktop",
+        "quality": "Medium"
+      }
+    },
+    {
+      "test": "render",
+      "status": "PASS",
+      "check": "SunBurst builds on Low",
+      "detail": {
+        "lights": 0,
+        "emitters": 3,
+        "distinctTextures": 3
+      }
+    },
+    {
+      "test": "render",
+      "status": "PASS",
+      "check": "SunVictory builds on Low",
+      "detail": {
+        "lights": 0,
+        "emitters": 4,
+        "distinctTextures": 3
+      }
+    },
+    {
+      "test": "render",
+      "status": "PASS",
+      "check": "SunBurst builds on Medium",
+      "detail": {
+        "lights": 1,
+        "emitters": 3,
+        "distinctTextures": 3
+      }
+    },
+    {
+      "test": "render",
+      "status": "PASS",
+      "check": "SunVictory builds on Medium",
+      "detail": {
+        "lights": 1,
+        "emitters": 4,
+        "distinctTextures": 3
+      }
+    },
+    {
+      "test": "render",
+      "status": "PASS",
+      "check": "SunBurst builds on High",
+      "detail": {
+        "lights": 1,
+        "emitters": 3,
+        "distinctTextures": 3
+      }
+    },
+    {
+      "test": "render",
+      "status": "PASS",
+      "check": "SunVictory builds on High",
+      "detail": {
+        "lights": 1,
+        "emitters": 4,
+        "distinctTextures": 3
+      }
+    },
+    {
+      "test": "visibility",
+      "status": "PASS",
+      "check": "aura emitters on Low",
+      "detail": {
+        "enabled": 2,
+        "totalRate": 11
+      }
+    },
+    {
+      "test": "visibility",
+      "status": "PASS",
+      "check": "aura light on Low"
+    },
+    {
+      "test": "visibility",
+      "status": "PASS",
+      "check": "aura emitters on Medium",
+      "detail": {
+        "enabled": 2,
+        "totalRate": 16.5
+      }
+    },
+    {
+      "test": "visibility",
+      "status": "PASS",
+      "check": "aura light on Medium"
+    },
+    {
+      "test": "visibility",
+      "status": "PASS",
+      "check": "aura emitters on High",
+      "detail": {
+        "enabled": 2,
+        "totalRate": 22
+      }
+    },
+    {
+      "test": "visibility",
+      "status": "PASS",
+      "check": "aura light on High"
+    },
+    {
+      "test": "cleanup",
+      "status": "PASS",
+      "check": "runtime folder empty",
+      "detail": {
+        "before": 0,
+        "during": 18,
+        "after": 0
+      }
+    },
+    {
+      "test": "cleanup",
+      "status": "PASS",
+      "check": "no attachments left on dummy",
+      "detail": {
+        "before": 2,
+        "after": 2
+      }
+    },
+    {
+      "test": "cleanup",
+      "status": "PASS",
+      "check": "no kit folders left",
+      "detail": {
+        "after": 0
+      }
+    },
+    {
+      "test": "cleanup",
+      "status": "PASS",
+      "check": "runner counters back to zero",
+      "detail": {
+        "activeBursts": 0,
+        "attached": 0
+      }
+    },
+    {
+      "test": "cleanup",
+      "status": "PASS",
+      "check": "instance count returns to baseline (+/-50)",
+      "detail": {
+        "before": 58065,
+        "during": 58382,
+        "after": 58065
+      }
+    },
+    {
+      "test": "cleanup",
+      "status": "INFO",
+      "check": "memory (informational)",
+      "detail": {
+        "totalMbAfter": 2544,
+        "particleMbAfter": 15.32,
+        "particleMbBefore": 11.9,
+        "totalMbBefore": 2537,
+        "particleMbDuring": 16.02
+      }
+    },
+    {
+      "test": "performance",
+      "status": "INFO",
+      "check": "baseline (no effects)",
+      "detail": {
+        "p95Ms": 67.9,
+        "avgFps": 15,
+        "worstMs": 68.3
+      }
+    },
+    {
+      "test": "performance",
+      "status": "PASS",
+      "check": "Low: 1 aura + SunBurst every 0.25 s",
+      "detail": {
+        "p95Ms": 68,
+        "addedP95Ms": 0.1,
+        "savedQuality": "Automatic",
+        "worstMs": 68.4,
+        "avgFps": 14,
+        "fpsVsBaseline": 0.99
+      }
+    },
+    {
+      "test": "performance",
+      "status": "PASS",
+      "check": "Medium: 1 aura + SunBurst every 0.25 s",
+      "detail": {
+        "p95Ms": 67.9,
+        "addedP95Ms": -0.1,
+        "savedQuality": "Automatic",
+        "worstMs": 68.4,
+        "avgFps": 15,
+        "fpsVsBaseline": 1
+      }
+    },
+    {
+      "test": "performance",
+      "status": "PASS",
+      "check": "High: 1 aura + SunBurst every 0.25 s",
+      "detail": {
+        "p95Ms": 68,
+        "addedP95Ms": 0.1,
+        "savedQuality": "Automatic",
+        "worstMs": 68.3,
+        "avgFps": 15,
+        "fpsVsBaseline": 0.99
+      }
+    },
+    {
+      "test": "camera",
+      "status": "PASS",
+      "check": "cinematic took the camera"
+    },
+    {
+      "test": "camera",
+      "status": "PASS",
+      "check": "kit switched camera to Scriptable"
+    },
+    {
+      "test": "camera",
+      "status": "PASS",
+      "check": "restored after effect",
+      "detail": {
+        "type": "Custom",
+        "fovAfter": 70,
+        "fovBefore": 70
+      }
+    },
+    {
+      "test": "camera",
+      "status": "PASS",
+      "check": "FOV restored",
+      "detail": {
+        "before": 70,
+        "after": 70
+      }
+    },
+    {
+      "test": "camera",
+      "status": "PASS",
+      "check": "second cinematic denied the camera"
+    },
+    {
+      "test": "camera",
+      "status": "PASS",
+      "check": "death released the guard",
+      "detail": {
+        "type": "Custom",
+        "died": true
+      }
+    },
+    {
+      "test": "camera",
+      "status": "PASS",
+      "check": "correct after respawn",
+      "detail": {
+        "type": "Custom",
+        "respawned": true
+      }
+    }
+  ]
+}

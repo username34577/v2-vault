@@ -1,0 +1,8 @@
+{
+  "name": "vfx-lab",
+  "rojoProject": "default.project.json",
+  "suites": [
+    { "name": "local", "mode": "solo", "timeoutS": 300 },
+    { "name": "replication", "mode": "multi", "players": 2, "timeoutS": 240 }
+  ]
+}

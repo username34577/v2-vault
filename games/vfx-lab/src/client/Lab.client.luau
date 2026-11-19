@@ -18,6 +18,13 @@ local VFXClient = require(script.Parent:WaitForChild("VFXClient"))
 local Perf = require(script.Parent:WaitForChild("Perf"))
 local LabTests = require(script.Parent:WaitForChild("LabTests"))
 
+-- Automated runs (dev/rbxtest): the server-side harness asks this client to run the local suite.
+local TestHarnessClient = require(game:GetService("ReplicatedStorage"):WaitForChild("TestHarness"):WaitForChild("TestHarnessClient"))
+TestHarnessClient.register("local", function()
+	return LabTests.runLocal() or {}
+end)
+TestHarnessClient.start()
+
 local player = Players.LocalPlayer
 local request = ReplicatedStorage:WaitForChild("VFXLabRequest")
 

@@ -1,0 +1,96 @@
+{
+  "status": "completed",
+  "meta": {
+    "players": [
+      "Player1",
+      "Player2"
+    ],
+    "durationS": 17.3,
+    "args": {
+      "suite": "replication"
+    },
+    "place": "Server",
+    "placeId": 0,
+    "startedAt": "2026-11-19T22:20:42Z",
+    "savedAt": "2026-11-19T14:21:22-08:00",
+    "commit": "1b1ee63"
+  },
+  "suite": "replication",
+  "schema": 1,
+  "results": [
+    {
+      "status": "INFO",
+      "test": "replication",
+      "check": "clients",
+      "detail": {
+        "count": 2
+      }
+    },
+    {
+      "status": "PASS",
+      "test": "replication",
+      "check": "aura on Player1 seen by all clients",
+      "detail": {
+        "Player1": true,
+        "Player2": true
+      }
+    },
+    {
+      "status": "PASS",
+      "test": "replication",
+      "check": "steal burst played on every client",
+      "detail": {
+        "after": {
+          "Player1": 1,
+          "Player2": 1
+        },
+        "before": {
+          "Player1": 0,
+          "Player2": 0
+        }
+      }
+    },
+    {
+      "status": "PASS",
+      "test": "replication",
+      "check": "aura left the old carrier on all clients",
+      "detail": {
+        "Player1": false,
+        "Player2": false
+      }
+    },
+    {
+      "status": "PASS",
+      "test": "replication",
+      "check": "aura on new carrier Player2 on all clients",
+      "detail": {
+        "Player1": true,
+        "Player2": true
+      }
+    },
+    {
+      "status": "PASS",
+      "test": "replication",
+      "check": "victory played on every client",
+      "detail": {
+        "after": {
+          "Player1": 2,
+          "Player2": 2
+        },
+        "before": {
+          "Player1": 1,
+          "Player2": 1
+        }
+      }
+    },
+    {
+      "status": "PASS",
+      "test": "replication",
+      "check": "aura gone everywhere after drop",
+      "detail": {
+        "Player1": false,
+        "Player2": false
+      }
+    }
+  ]
+}

@@ -540,6 +540,7 @@ One line per note: `title | path | tags | ~whole-note tokens`. Grep it for an AP
 - AI-Ready Project Boilerplate - Repo Layout Agents Navigate Well | 16 MCP and Agents/AI-Ready Project Boilerplate - Repo Layout Agents Navigate Well.md | agents, ai, workflow, rojo, repo-layout, documentation, claude-code | ~2.3k tok
 - Agent Handoff Notes - Project State and Resume Templates | 16 MCP and Agents/Agent Handoff Notes - Project State and Resume Templates.md | agents, ai, workflow, handoff, documentation, claude-code | ~2.1k tok
 - Agent Review Loops and Guardrails in Practice | 16 MCP and Agents/Agent Review Loops and Guardrails in Practice.md | agents, mcp, guardrails, review, hooks, permissions, verification, claude-code | ~6.3k tok
+- Automated Studio Test Runs (rbxtest) | 16 MCP and Agents/Automated Studio Test Runs (rbxtest).md | mcp, studio, testing, agents, tooling | ~1.3k tok
 - Blender MCP | 16 MCP and Agents/Blender MCP.md | mcp, blender, ai, agents, modeling, pipeline | ~4.0k tok
 - Built-In Studio MCP vs Community MCP Servers - Migration Guide | 16 MCP and Agents/Built-In Studio MCP vs Community MCP Servers - Migration Guide.md | mcp, studio, agents, migration, tooling | ~2.1k tok
 - Case Study - Building a Game with AI Agents | 16 MCP and Agents/Case Study - Building a Game with AI Agents.md | case-study, mcp, agents, production, workflow | ~3.4k tok
@@ -1510,5 +1511,5 @@ One line per note: `title | path | tags | ~whole-note tokens`. Grep it for an AP
 - Overview | Roblox Development/Resources/VFX/Roblox VFX V2/Overview.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~1.8k tok
 - Prerequisites | Roblox Development/Resources/VFX/Roblox VFX V2/Prerequisites.md | resources, vfx, tool, setup, roblox-vfx | ~1.4k tok
 - Roblox VFX V2 | Roblox Development/Resources/VFX/Roblox VFX V2/Roblox VFX V2.md | resources, vfx, tool, claude-code-skill, roblox-vfx | ~1.3k tok
-- Test Lab | Roblox Development/Resources/VFX/Roblox VFX V2/Test Lab.md | resources, vfx, tool, testing, studio, rojo, performance, roblox-vfx | ~2.7k tok
+- Test Lab | Roblox Development/Resources/VFX/Roblox VFX V2/Test Lab.md | resources, vfx, tool, testing, studio, rojo, performance, roblox-vfx | ~3.2k tok
 - Troubleshooting | Roblox Development/Resources/VFX/Roblox VFX V2/Troubleshooting.md | resources, vfx, tool, troubleshooting, debugging, roblox-vfx | ~2.6k tok

@@ -5,6 +5,9 @@
     "ReplicatedStorage": {
       "Shared": {
         "$path": "src/shared"
+      },
+      "TestHarness": {
+        "$path": "../../dev/rbxtest/luau"
       }
     },
     "ServerScriptService": {

@@ -84,7 +84,7 @@ end
 local runningRep = false
 function LabTests.runReplication()
 	if runningRep then
-		return
+		return nil
 	end
 	runningRep = true
 	table.clear(results)
@@ -154,6 +154,7 @@ function LabTests.runReplication()
 	print(string.format("[VFXLab test] replication suite done: %d checks, %d FAIL", #results, fails))
 	print("VFXLAB_RESULTS " .. HttpService:JSONEncode({ suite = "replication", results = results }))
 	runningRep = false
+	return table.clone(results)
 end
 
 cmd.OnServerEvent:Connect(function(player, action)

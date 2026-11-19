@@ -5,7 +5,21 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local VFXServer = require(script.Parent.VFXServer)
-require(script.Parent.LabTests) -- lab-only test remotes (replication test, KillMe)
+local LabTests = require(script.Parent.LabTests) -- lab-only test remotes (replication test, KillMe)
+
+-- Automated runs (dev/rbxtest): when Studio starts a test through StudioTestService with
+-- args { suite = "local" | "replication" }, run it and return the results. Inactive in normal play.
+local TestHarness = require(ReplicatedStorage:WaitForChild("TestHarness"):WaitForChild("TestHarness"))
+TestHarness.register("local", { side = "client", timeout = 240 })
+TestHarness.register("replication", {
+	side = "server",
+	minPlayers = 2,
+	timeout = 120,
+	run = function()
+		return LabTests.runReplication() or {}
+	end,
+})
+TestHarness.start()
 local Cues = require(ReplicatedStorage.Shared.VFX.Cues)
 
 ---------------------------------------------------------------------------

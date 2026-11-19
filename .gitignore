@@ -20,3 +20,7 @@ LihFolk Vault V2/.smart-env/
 # local tools (Rojo etc.), never committed
 /tools/
 *.exe
+
+# rbxtest temp files
+.rbxtest-sync.luau
+.rbxtest-result.json

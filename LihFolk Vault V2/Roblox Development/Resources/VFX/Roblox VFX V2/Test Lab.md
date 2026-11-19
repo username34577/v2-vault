@@ -12,7 +12,7 @@ researched: 2026-11-19
 > - Added 2026-11-19 so Studio results are measured, not eyeballed.
 > - Run B on PC, then in the device emulator, then (best) on a real phone through Studio's Test on device or a private server.
 >
-> Cost: TL;DR ~140 tok · whole note ~2.7k tok. Read more: ## Run it (on your PC) · ## Automated suite (run in Studio)
+> Cost: TL;DR ~140 tok · whole note ~3.2k tok. Read more: ## Automated suite (run in Studio) · ## Results in Studio (fill in)
 <!-- tldr:end -->
 
 Part of [[Roblox VFX V2]]. Related: [[Roblox VFX V2/Integration|Integration]] · [[Roblox VFX V2/Examples|Examples]] · [[Roblox VFX V2/Troubleshooting|Troubleshooting]]
@@ -26,6 +26,7 @@ Part of [[Roblox VFX V2]]. Related: [[Roblox VFX V2/Integration|Integration]] ·
 
 | Date | Where | What happened |
 |---|---|---|
+| 2026-11-19 (automated) | Laptop, rbxtest | First no-click run: local 27 PASS / 0 FAIL / 3 INFO, replication 6/6. Absolute FPS throttled to 15 (baseline too), relative overhead still passes. See [[Automated Studio Test Runs (rbxtest)]] |
 | 2026-11-19 (pass 3) | Cloud session | Attempted Studio testing: **blocked**, PC not reachable (no Studio MCP tools, no shared computer). Built the automated suite below and `tools/windows_setup_check.ps1`. Nothing run in Studio |
 
 ## What is in it
