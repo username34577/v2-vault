@@ -64,6 +64,12 @@ local function unwatch(model: Instance)
 	end
 end
 
+-- True if this client currently shows the state effect `attribute` on `model` (tests and debugging).
+function VFXClient.hasState(model: Model, attribute: string): boolean
+	local key = keys[model]
+	return key ~= nil and Effects.isAttached(key .. ":" .. attribute)
+end
+
 function VFXClient.start()
 	local remote = ReplicatedStorage:WaitForChild(Cues.REMOTE)
 	remote.OnClientEvent:Connect(function(name, position, power)

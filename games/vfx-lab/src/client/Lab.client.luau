@@ -16,6 +16,7 @@ local Assets = require(VFX:WaitForChild("Assets"))
 local EclipseRend = require(VFX:WaitForChild("Kits"):WaitForChild("EclipseRend"))
 local VFXClient = require(script.Parent:WaitForChild("VFXClient"))
 local Perf = require(script.Parent:WaitForChild("Perf"))
+local LabTests = require(script.Parent:WaitForChild("LabTests"))
 
 local player = Players.LocalPlayer
 local request = ReplicatedStorage:WaitForChild("VFXLabRequest")
@@ -276,6 +277,26 @@ button("Clear all effects", Enum.KeyCode.X, function()
 	Effects.clear()
 	ask("Clear", "Me")
 	say("cleared")
+end)
+label("AUTOMATED TESTS (results: VFXLAB_RESULTS line in Output)")
+button("Run local test suite (~60 s, kills you once)", Enum.KeyCode.T, function()
+	say("local test suite running...")
+	task.spawn(function()
+		local r = LabTests.runLocal()
+		if r then
+			local fails = 0
+			for _, x in r do
+				if x.status == "FAIL" then
+					fails += 1
+				end
+			end
+			say(string.format("local suite: %d checks, %d FAIL (Output has details)", #r, fails))
+		end
+	end)
+end)
+button("Run replication test (2+ clients)", Enum.KeyCode.Y, function()
+	LabTests.runReplication()
+	say("replication test running on the server; see the server Output")
 end)
 local statsLabel = label("", 150)
 

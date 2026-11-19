@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local VFXServer = require(script.Parent.VFXServer)
+require(script.Parent.LabTests) -- lab-only test remotes (replication test, KillMe)
 local Cues = require(ReplicatedStorage.Shared.VFX.Cues)
 
 ---------------------------------------------------------------------------

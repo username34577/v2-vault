@@ -12,7 +12,7 @@ researched: 2026-11-19
 > - Copy `LOCAL.template.md` to `LOCAL.md` in `~/.claude/skills/roblox-vfx/` and fill it in (fields in Prerequisites).
 > - The generated assets are not in the download.
 >
-> Cost: TL;DR ~130 tok · whole note ~1.8k tok. Read more: ## 4. First run: build the textures and meshes (once per machine) · ## 5. Check the install
+> Cost: TL;DR ~130 tok · whole note ~2.1k tok. Read more: ## 4. First run: build the textures and meshes (once per machine) · ## 6. Connect Studio
 <!-- tldr:end -->
 
 Part of [[Roblox VFX V2]]. Previous: [[Roblox VFX V2/Prerequisites|Prerequisites]] · Next: [[Roblox VFX V2/API Reference|API Reference]]
@@ -112,7 +112,24 @@ lune run <skill>/sim/tools/lune/build_check.luau <kit.luau>
 
 ## 6. Connect Studio
 
-Status 2026-11-19: **not configured in the cloud session** (no Studio MCP tools, no shared computer). Studio work goes through Claude Code on your PC with the Studio MCP connected. Before any Studio step the skill wants proof the bridge works: `execute_luau` with `return 1`, then a screenshot. With the older `robloxstudio-mcp`: `curl -s localhost:48741/health` must show `"pluginConnected": true`.
+Status 2026-11-19: **not configured yet**. The cloud sessions have no Studio MCP tools and no access to your PC. Studio's MCP server is local (it runs `%LOCALAPPDATA%\Roblox\mcp.bat` over stdio), so only a Claude Code session **on your Windows PC** can use it. A cloud session never can.
+
+**Windows setup (on your PC):**
+
+1. Check what is there (read-only, installs nothing; it also test-builds the lab with Rojo):
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File games\vfx-lab\tools\windows_setup_check.ps1
+   ```
+   Written 2026-11-19 but **not run yet**: no PowerShell in the cloud session, so it is untested.
+2. Studio MCP (from the vault's [[Roblox Studio MCP Server]] note): update Studio → **Assistant → ⋯ → Manage MCP Servers → Enable Studio as MCP server** (a green indicator shows connected clients). Then **Assistant Settings → MCP Servers → Quick connect → Claude Code**, or register it yourself:
+   ```powershell
+   claude mcp add --scope user Roblox_Studio -- cmd.exe /c "%LOCALAPPDATA%\Roblox\mcp.bat"
+   ```
+   Restart Claude Code. Check: `claude mcp list` shows `Roblox_Studio`; in Claude Code, `list_roblox_studios` lists your open place.
+3. Rojo: install with Rokit (`rokit add rojo-rbx/rojo` in the repo) or download `rojo.exe`, then `rojo plugin install` and restart Studio.
+4. Run the lab: `cd games\vfx-lab`, `rojo serve`, open a new Baseplate place → Rojo → **Connect**, then follow [[Roblox VFX V2/Test Lab|Test Lab]].
+
+Before any Studio step the skill wants proof the bridge works: `execute_luau` with `return 1`, then a screenshot. With the older third-party `robloxstudio-mcp`: `curl -s localhost:48741/health` must show `"pluginConnected": true`.
 
 ## Upgrading
 

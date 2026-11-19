@@ -9,15 +9,24 @@ researched: 2026-11-19
 > [!tldr] TL;DR
 > - Arena: a 600 × 160 floor, a sun pedestal with a Neon sun prop, and distance markers at 25, 50, 100, 150, 250 and 400 studs...
 > - `cd games/vfx-lab` and `rojo serve`. In Studio: new Baseplate → Rojo → Connect.
+> - Added 2026-11-19 so Studio results are measured, not eyeballed.
 > - Run B on PC, then in the device emulator, then (best) on a real phone through Studio's Test on device or a private server.
-> - What the previews changed. The first renders showed the aura nearly invisible in daylight (corona at most 45 % opaque, drawn...
 >
-> Cost: TL;DR ~160 tok · whole note ~1.6k tok. Read more: ## Run it (on your PC) · ## Verified outside Studio (2026-11-19, cloud)
+> Cost: TL;DR ~140 tok · whole note ~2.7k tok. Read more: ## Run it (on your PC) · ## Automated suite (run in Studio)
 <!-- tldr:end -->
 
 Part of [[Roblox VFX V2]]. Related: [[Roblox VFX V2/Integration|Integration]] · [[Roblox VFX V2/Examples|Examples]] · [[Roblox VFX V2/Troubleshooting|Troubleshooting]]
 
 `games/vfx-lab/` (at the repo root, next to `games/snatch-the-sun/`) is a minimal Rojo project for testing effects in Roblox Studio before they go into a game. It uses the same layout as the other games (`src/shared` → `ReplicatedStorage.Shared`, `src/server` → `ServerScriptService.VFXLab`, `src/client` → `StarterPlayerScripts.VFXLabClient`), and every effect in it runs through the code a real game would use.
+
+> [!warning] Studio test status: NOT RUN YET
+> No test in this note has been executed inside Roblox Studio. Three cloud sessions (2026-11-19) built and checked the lab outside Studio; the third tried to start Studio testing and could not: no Studio MCP tools in the session, and no computer of yours shared with it (Rojo, Studio and the MCP all run on your Windows PC). Everything under *Verified outside Studio* is a simulated or static check. Rows under *Results in Studio* stay "not run" until someone runs them.
+
+## Studio test status log
+
+| Date | Where | What happened |
+|---|---|---|
+| 2026-11-19 (pass 3) | Cloud session | Attempted Studio testing: **blocked**, PC not reachable (no Studio MCP tools, no shared computer). Built the automated suite below and `tools/windows_setup_check.ps1`. Nothing run in Studio |
 
 ## What is in it
 
@@ -52,6 +61,27 @@ Part of [[Roblox VFX V2]]. Related: [[Roblox VFX V2/Integration|Integration]] ·
 | B | Benchmark | About 20 s: 10 carriers plus a SunBurst every 0.15 s, 5 s per preset; prints a table to Output (F9) |
 | X | Clear all | `bursts live 0`, `loops 0`, nothing left in `workspace.VFXRuntime` |
 
+## Automated suite (run in Studio)
+
+Added 2026-11-19 so Studio results are measured, not eyeballed. Client: `src/client/LabTests.luau`; server: `src/server/LabTests.luau`. Each check prints `[VFXLab test] PASS|FAIL|INFO ...`, and each suite ends with one line `VFXLAB_RESULTS {json}` to paste below.
+
+| Priority | Suite and check | Pass condition |
+|---|---|---|
+| 1. Rendering | local: SunBurst / SunVictory build on Low, Medium, High | Emitters created; light counts by preset (Low drops flash lights) |
+| 1. Rendering (looks) | `LabTests.freeze(name, age)` then a screenshot, `LabTests.unfreeze()` | **Judged by eye**: no automated pass. Ages to capture: SunBurst 0.05 / 0.15 / 0.4, SunVictory 0.2 / 0.6 / 1.1, SunAura 1.0 |
+| 2. Replication | replication (server, **needs 2+ clients**): aura on player 1 seen by all; steal burst played on all (each client's own played counter rises); aura moves to player 2 on all; victory on all; aura gone after drop | Every client answers as expected (the server asks each client what it shows) |
+| 3. Camera | local: kit switches to Scriptable; restored to Custom + own Humanoid after the effect; FOV restored; second cinematic denied; **death mid-cinematic releases the guard**; correct after respawn | As stated (the suite kills you once via a lab-only remote) |
+| 4. Sun visibility | local: carrier aura on Low, Medium, High has all emitters enabled, Rate > 0, and its light on | Light must stay on Low (gameplay cue). Day/dusk looks: screenshot with key L |
+| 5. Performance | local: 1 aura + a SunBurst every 0.25 s for 5 s per preset | p95 frame ≤ 16.7 ms (reported with avg FPS, worst ms, the player's saved graphics level) |
+| 6. Cleanup / memory | local: 200 bursts + 50 aura attach/detach + 3 kit plays, then wait | Runtime folder empty, no leftover attachments or kit folders, runner counters 0, `Stats.InstanceCount` back within ±50; memory (total and `GraphicsParticles`) reported |
+
+**How to run, by hand:** `rojo serve` in `games/vfx-lab`, connect, then
+1. **Play** (solo), press **T**. Read Output, copy the `VFXLAB_RESULTS` line.
+2. **Test tab → Clients and Servers → Local Server, 2 players → Start.** On either client press **Y**; read the **server** Output.
+3. Lower-end settings: set Studio's rendering quality level to its lowest (Studio Settings → Rendering; menu names vary by Studio version, see [[Lighting Untextured Art in Roblox]]), set the lab to **Low** (key Q), press **T** again. Then **Test → Device** with a phone profile and repeat. Studio on a PC does not slow the CPU down to a phone's, so a real phone run is the only true mobile number.
+
+**How to run with Claude Code on your PC** (Studio MCP connected): ask it to call `list_roblox_studios`, start a play test, run `require(game.Players.LocalPlayer.PlayerScripts.VFXLabClient.LabTests).runLocal()` in the **Client** context, read `get_console_output`, and take `screen_capture`s after `freeze(...)`. The two-client test still needs Studio's Local Server with 2 players. Per the vault's [[Roblox Studio MCP Server]] note, check whether the MCP can reach those extra windows (each has its own `studio_id`).
+
 ## Performance workflow
 
 1. Run **B** on PC, then in the device emulator, then (best) on a real phone through Studio's **Test on device** or a private server.
@@ -74,10 +104,16 @@ Part of [[Roblox VFX V2]]. Related: [[Roblox VFX V2/Integration|Integration]] ·
 
 ## Results in Studio (fill in)
 
-| Date | Device | Test | Result | Notes |
+Only results from a real Studio run go here. Paste each `VFXLAB_RESULTS` line under the table.
+
+| Date | Device / settings | Suite or test | Result | Notes |
 |---|---|---|---|---|
-| (pending) | PC | 1-16 above | not run yet | |
-| (pending) | Phone emulator | 1-6, B | not run yet | |
+| (not run) | PC, solo play | local suite (T) | not run yet | |
+| (not run) | Studio Local Server, 2 players | replication suite (Y) | not run yet | |
+| (not run) | PC, lowest graphics, lab Low | local suite (T) | not run yet | |
+| (not run) | Device emulator (phone) | local suite (T) + keys 1-6 | not run yet | |
+| (not run) | Real phone | keys 1-6, B | not run yet | |
+| (not run) | PC | visual check of frozen phases (screenshots) | not run yet | |
 
 | Preset | Device | avg FPS | p95 ms | worst ms | played / culled / capped |
 |---|---|---|---|---|---|

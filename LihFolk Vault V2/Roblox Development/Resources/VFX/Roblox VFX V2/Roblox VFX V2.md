@@ -26,7 +26,7 @@ researched: 2026-11-19
 
 **Our layer on top of the skill** lives in `games/vfx-lab/` (repo root): a reusable runtime (`src/shared/VFX/`: quality presets, effect runner, camera guard, kit runner, cue list), multiplayer server/client modules, the VFX library with an asset manifest, the three Snatch the Sun effects, and `tools/check.sh` that validates it all. The upstream skill is left exactly as shipped.
 
-## Status (updated 2026-11-19, second pass)
+## Status (updated 2026-11-19, third pass)
 
 | Item | Status |
 |---|---|
@@ -40,7 +40,9 @@ researched: 2026-11-19
 | Missing `sync_vt.py` (`__vt` / `__em` textures) | **Replaced** by `tools/vfx_manifest.py`; both derivations pixel-checked |
 | Snatch the Sun effects (`SunAura`, `SunBurst`, `SunVictory`) | **Verified outside Studio**: 3 recipes clean, `VFXKit` emitted, previewed in the roblox-vfx sim, tuned from the previews |
 | VFX Lab Rojo project | **Built and checked** (`tools/check.sh`: all passed, Roblox API check 0 findings). **Not yet run in Studio** |
-| Anything inside Roblox Studio | **Not tested**: follow [[Roblox VFX V2/Test Lab\|Test Lab]] on your PC and record results there |
+| Automated Studio test suite (render, 2-client replication, camera after effect/death/respawn, sun visibility per preset, performance, cleanup/memory) | **Written, not run**: needs Studio on your PC |
+| Windows setup check (`tools/windows_setup_check.ps1`) | **Written, not run** (no PowerShell or PC access from the cloud) |
+| Anything inside Roblox Studio | **Not tested**: a Studio session was attempted on 2026-11-19 and was blocked (PC not reachable). Follow [[Roblox VFX V2/Test Lab\|Test Lab]] on your PC and record results there |
 
 ## Related vault notes
 

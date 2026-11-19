@@ -7,7 +7,7 @@ Docs in the vault: `LihFolk Vault V2/Roblox Development/Resources/VFX/Roblox VFX
 ## Status (2026-11-19)
 
 - Built and checked **outside Studio**: `bash tools/check.sh` passes (recipes clean, critic gate, kit export, manifest, Luau syntax, Roblox API names). Effects previewed in the roblox-vfx browser sim (`library/previews/`).
-- **Not yet run in Roblox Studio.** The cloud session that built this had no Studio connection. Follow *First run in Studio* below and record the results in the vault's *Test Lab* note.
+- **Not yet run in Roblox Studio.** The cloud sessions that built this had no Studio connection; a Studio test attempt on 2026-11-19 was blocked (PC not reachable). The automated suite (keys T and Y, `src/*/LabTests.luau`) is written but unrun. Record results in the vault's *Test Lab* note.
 
 ## Layout
 
@@ -35,6 +35,10 @@ tools/                      author_recipes.py, check.sh, vfx_manifest.py, render
                             crimson_brief_overlay.py, luau_syntax_check.py, api_check_lab.py
 ```
 
+## Before the first run (Windows)
+
+`powershell -ExecutionPolicy Bypass -File tools\windows_setup_check.ps1` (read-only) checks Studio, its MCP launcher, Claude Code and the `Roblox_Studio` MCP registration, Rojo and its plugin, Node, Python packages, Lune and Blender, and test-builds this project. Setup steps: the vault's *Installation* note, section 6.
+
 ## First run in Studio
 
 1. `rojo serve` in this folder. In Studio: new **Baseplate** place → Rojo → Connect.
@@ -59,6 +63,8 @@ tools/                      author_recipes.py, check.sh, vfx_manifest.py, render
 | 8 | Stress: 10 carriers | 10 local dummies with auras |
 | B | Benchmark | About 20 s; prints a Low/Medium/High table to Output (F9) |
 | X | Clear all | Everything gone; `bursts live 0`, `loops 0` |
+| T | Automated local suite | about 60 s (kills your character once); prints PASS/FAIL lines and a `VFXLAB_RESULTS` line |
+| Y | Automated replication suite | Needs **Test → Local Server with 2 players**; results in the **server** Output |
 
 4. Phone check: **Test → Device** (a phone in landscape), run 1-6 and B again.
 5. Copy the benchmark table and anything that looked wrong into the vault's *Test Lab* note.
