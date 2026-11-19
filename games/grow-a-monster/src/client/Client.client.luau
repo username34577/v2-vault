@@ -1,6 +1,6 @@
--- Grow a Monster: client entry. Wires input, server attributes and remotes to the HUD, shop,
--- monster views and effects. The client only ASKS the server ("throw", "buy <id>", "equip <id>");
--- it never decides coins, size or prices.
+-- Grow a Monster: client entry (v0.4 Snack Grove). Wires input, server attributes and remotes to the
+-- HUD, guide line and effects. The client only ASKS the server to "throw" (feed the top carried snack);
+-- it never decides snacks, coins, size or objectives.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
@@ -9,8 +9,6 @@ local TweenService = game:GetService("TweenService")
 local Config = require(ReplicatedStorage.Shared.Config)
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local ThrowRemote = Remotes:WaitForChild("Throw")
-local BuyRemote = Remotes:WaitForChild("BuyFood")
-local EquipRemote = Remotes:WaitForChild("EquipFood")
 local NotifyRemote = Remotes:WaitForChild("Notify")
 local FxRemote = Remotes:WaitForChild("Fx")
 
@@ -20,9 +18,8 @@ local MonsterView = require(script.Parent.MonsterView)
 local FoodFlight = require(script.Parent.FoodFlight)
 local UI = require(script.Parent.UI)
 local Hud = require(script.Parent.Hud)
-local Shop = require(script.Parent.Shop)
 local Feel = require(script.Parent.Feel)
-local Tutorial = require(script.Parent.Tutorial)
+local Guide = require(script.Parent.Guide)
 
 local player = Players.LocalPlayer
 
@@ -53,24 +50,31 @@ local function isTooFar(monster): boolean
 	if not root or not body then
 		return false
 	end
-	return (root.Position - body.Position).Magnitude > Config.ThrowRange + body.Size.X / 2
+	return (root.Position - body.Position).Magnitude > Config.Companion.FeedRange + body.Size.X
 end
 
 ---------------------------------------------------------------------------
--- Throwing
+-- Feeding
 ---------------------------------------------------------------------------
 local lastSent = 0
+local lastHint = 0
 local function throw()
 	local now = os.clock()
 	if now - lastSent < Config.ThrowCooldown then
 		return -- the server enforces this too; this just avoids wasted sends
+	end
+	if (player:GetAttribute("Carrying") or 0) == 0 then
+		if now - lastHint > 2.5 then
+			lastHint = now
+			Hud.toast("Your hands are empty! Shake snack plants in the Snack Grove.", "warn")
+		end
+		return
 	end
 	local monster = myMonster()
 	if not monster then
 		return
 	end
 	if isTooFar(monster) then
-		Hud.setFar(true)
 		Hud.toast("Walk back to your monster to feed it!", "warn")
 		return
 	end
@@ -81,86 +85,35 @@ local function throw()
 end
 
 ---------------------------------------------------------------------------
--- HUD + shop
+-- HUD
 ---------------------------------------------------------------------------
 Hud.build({
 	onThrow = throw,
-	onShop = function()
-		Shop.toggle()
-		Tutorial.shopOpened()
-	end,
+	onShop = function() end,
 })
+Hud.setShopVisible(false) -- v0.4: upgrades are sold at the Backpack Stand in the world
 Feel.start(Hud)
-Tutorial.start(Hud, myMonster)
-
-Shop.build({
-	buy = function(foodId)
-		BuyRemote:FireServer(foodId)
-	end,
-	equip = function(foodId)
-		EquipRemote:FireServer(foodId)
-	end,
-	cantAfford = function(food, need)
-		Hud.toast(`Need {need} more coins for {food.Name}`, "warn")
-	end,
-})
-
-local owned = {}
-local lastEquipped = nil
-local refreshQueued = false
-local ready = false -- true once the first save data has arrived (no purchase sounds on join)
+Guide.start(myMonster)
 
 local function refreshAll()
-	refreshQueued = false
 	local coins = player:GetAttribute("Coins") or 0
 	local size = player:GetAttribute("Size") or 1
-	local equipped = player:GetAttribute("Equipped") or Config.StartingFood
-	for _, food in Config.Foods do
-		owned[food.Id] = player:GetAttribute(`Owned_{food.Id}`) == true
-	end
 	Hud.setStats(coins, player:GetAttribute("Income") or 0, size)
-	Hud.setMilestone(size)
-	if equipped ~= lastEquipped then
-		lastEquipped = equipped
-		Hud.setEquipped(equipped)
-	end
-	local canBuy
-	if Shop.isOpen() then
-		canBuy = Shop.refresh({ Coins = coins, Equipped = equipped, Owned = owned })
-	else
-		Shop.refresh({ Coins = coins, Equipped = equipped, Owned = owned }, true)
-		canBuy = Shop.canBuyAny(coins, owned)
-	end
-	Hud.setShopBadge(canBuy and not Shop.isOpen())
-	if ready then
-		Tutorial.onCanBuy(canBuy)
-	end
-	if player:GetAttribute("Coins") ~= nil then
-		ready = true
-	end
+	Hud.setObjective(player:GetAttribute("ObjText") or "", player:GetAttribute("ObjProgress") or 0, player:GetAttribute("ObjGoal") or 1)
+	local top = player:GetAttribute("CarryTop")
+	local snack = top and Config.Snacks[top]
+	Hud.setCarry(player:GetAttribute("Carrying") or 0, player:GetAttribute("CarryCap") or 3, snack and snack.Model)
 end
 
-local function queueRefresh()
-	if not refreshQueued then
-		refreshQueued = true
-		task.defer(refreshAll)
+local queued = false
+player.AttributeChanged:Connect(function()
+	if not queued then
+		queued = true
+		task.defer(function()
+			queued = false
+			refreshAll()
+		end)
 	end
-end
-
-player.AttributeChanged:Connect(function(name)
-	local id = string.match(name, "^Owned_(.+)$")
-	if not ready then
-		queueRefresh()
-		return
-	end
-	if id and player:GetAttribute(name) == true and owned[id] == false then
-		Sound.play("Purchase")
-		Feel.purchased()
-		Shop.confirm(id)
-	elseif name == "Equipped" then
-		Shop.confirm(player:GetAttribute("Equipped"))
-	end
-	queueRefresh()
 end)
 refreshAll()
 
@@ -176,46 +129,11 @@ task.spawn(function()
 	Hud.setMonsterColor(colors.Body)
 end)
 
--- Spawn framing: the default camera looks down at your character, which hides a big monster's
--- face under the top HUD. Once the server has put us on our plot, look level at the monster's middle.
-local function frameMonster()
-	local monster = myMonster()
-	local character = player.Character
-	local root = character and character:FindFirstChild("HumanoidRootPart")
-	local ground = monster and monster:GetAttribute("Ground")
-	if not root or typeof(ground) ~= "CFrame" then
-		return
-	end
-	local scale = Config.scaleForSize(monster:GetAttribute("MonsterSize") or 1)
-	local target = ground.Position + Vector3.new(0, 3.3 * scale, 0) -- body centre
-	local flat = (root.Position - target) * Vector3.new(1, 0, 1)
-	if flat.Magnitude < 1 then
-		return
-	end
-	-- The camera module keeps this angle and re-centres on the (raised) focus point.
-	local camPos = root.Position + flat.Unit * 12 + Vector3.new(0, 5, 0)
-	workspace.CurrentCamera.CFrame = CFrame.lookAt(camPos, target)
-end
-
-local function onCharacter(character)
-	-- Raise the camera's focus above the head so your character doesn't cover the monster's mouth.
-	local humanoid = character:WaitForChild("Humanoid", 5)
-	if humanoid then
-		humanoid.CameraOffset = Config.CameraOffset
-	end
-	-- The camera is aimed when the server says it has put us on our plot ("Placed" cue below);
-	-- loading a save can take a while, so don't guess with a timer.
-end
-player.CharacterAdded:Connect(onCharacter)
-if player.Character then
-	task.spawn(onCharacter, player.Character)
-end
-
--- "Too far" hint follows the player around.
+-- "Too far" hint only matters when you have something to feed.
 task.spawn(function()
 	while true do
 		task.wait(0.25)
-		Hud.setFar(isTooFar(myMonster()))
+		Hud.setFar((player:GetAttribute("Carrying") or 0) > 0 and isTooFar(myMonster()))
 	end
 end)
 
@@ -223,14 +141,46 @@ NotifyRemote.OnClientEvent:Connect(function(text)
 	if type(text) ~= "string" then
 		return
 	end
-	local kind = if string.find(text, "^Bought") or string.find(text, "^Welcome") then "good"
-		elseif string.find(text, "^You need") then "warn"
+	local kind = if string.find(text, "^Bought") or string.find(text, "^Welcome") or string.find(text, "^Your plot") then "good"
+		elseif string.find(text, "^You need") or string.find(text, "^Hands full") or string.find(text, "^Get closer") then "warn"
 		else "info"
 	Hud.toast(text, kind)
 end)
 
 ---------------------------------------------------------------------------
--- Input: THROW button, click/tap the world, F, gamepad R2; gamepad Y = shop, B = close
+-- Camera framing at spawn (the server tells us when we've been placed on our plot)
+---------------------------------------------------------------------------
+local function frameMonster()
+	local monster = myMonster()
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	local body = monster and monster.PrimaryPart
+	if not root or not body then
+		return
+	end
+	local target = body.Position + Vector3.new(0, 1.5 * (monster:GetAttribute("Scale") or 1), 0)
+	local flat = (root.Position - target) * Vector3.new(1, 0, 1)
+	if flat.Magnitude < 1 then
+		return
+	end
+	local camPos = root.Position + flat.Unit * 12 + Vector3.new(0, 5, 0)
+	workspace.CurrentCamera.CFrame = CFrame.lookAt(camPos, target)
+end
+
+local function onCharacter(character)
+	-- Raise the camera's focus above the head so your character doesn't cover the monster.
+	local humanoid = character:WaitForChild("Humanoid", 5)
+	if humanoid then
+		humanoid.CameraOffset = Config.CameraOffset
+	end
+end
+player.CharacterAdded:Connect(onCharacter)
+if player.Character then
+	task.spawn(onCharacter, player.Character)
+end
+
+---------------------------------------------------------------------------
+-- Input: FEED button, click/tap the world, F, gamepad R2
 ---------------------------------------------------------------------------
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then
@@ -240,26 +190,21 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		or input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.KeyCode == Enum.KeyCode.ButtonR2
 	then
-		if not Shop.isOpen() then
+		if (player:GetAttribute("Carrying") or 0) > 0 or input.KeyCode ~= Enum.KeyCode.Unknown then
 			throw()
 		end
-	elseif input.KeyCode == Enum.KeyCode.ButtonY then
-		Shop.toggle()
-		Tutorial.shopOpened()
-	elseif input.KeyCode == Enum.KeyCode.ButtonB and Shop.isOpen() then
-		Shop.close()
 	end
 end)
 
--- Tapping the world on a phone throws too (taps only, so walking with the thumbstick doesn't).
+-- Tapping the world on a phone feeds too (taps only, so walking with the thumbstick doesn't).
 UserInputService.TouchTapInWorld:Connect(function(_, processedByUI)
-	if not processedByUI and not Shop.isOpen() then
+	if not processedByUI and (player:GetAttribute("Carrying") or 0) > 0 then
 		throw()
 	end
 end)
 
 ---------------------------------------------------------------------------
--- Server cues: food thrown / eaten (any monster), milestones, fell off
+-- Server cues
 ---------------------------------------------------------------------------
 local fadeGui = UI.screen("Fade", 50, Enum.ScreenInsets.None)
 local fade = UI.new("Frame", {
@@ -270,6 +215,12 @@ local fade = UI.new("Frame", {
 	Active = false,
 }, fadeGui)
 
+local function flash(color: Color3, from: number)
+	fade.BackgroundColor3 = color
+	fade.BackgroundTransparency = from
+	TweenService:Create(fade, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()
+end
+
 MonsterView.onMilestone = function(model, milestone, isMine)
 	if isMine then
 		Feel.milestone(model)
@@ -278,24 +229,31 @@ MonsterView.onMilestone = function(model, milestone, isMine)
 	end
 end
 
-FxRemote.OnClientEvent:Connect(function(kind, monster, foodId, extra)
-	if kind == "Throw" and typeof(monster) == "Instance" then
-		MonsterView.expect(monster, Config.FlightTime)
-		FoodFlight.launch(monster, foodId, extra)
-	elseif kind == "Eat" and typeof(monster) == "Instance" then
-		local growth = tonumber(extra) or 1
-		local mine = monster:GetAttribute("OwnerUserId") == player.UserId
-		MonsterView.gulp(monster, growth)
-		Feel.ate(monster, foodId, growth, mine)
-		if mine then
-			Tutorial.onBite()
-		end
+FxRemote.OnClientEvent:Connect(function(kind, a, b, c)
+	if kind == "Throw" and typeof(a) == "Instance" then
+		FoodFlight.launch(a, b, c)
+	elseif kind == "Eat" and typeof(a) == "Instance" then
+		local growth = tonumber(c) or 1
+		Feel.ate(a, b, growth, a:GetAttribute("OwnerUserId") == player.UserId)
+	elseif kind == "Picked" then
+		Sound.play("Coin", 1.3)
+		UI.pop(Hud.throwButton(), 1.15)
+	elseif kind == "Caught" then
+		Sound.play("Whoosh")
+		flash(Config.Palette.Coral, 0.35)
+		Hud.toast("BONK! The Gardener caught you and took your snacks. Hide in the tall grass!", "warn")
+	elseif kind == "Objective" then
+		Sound.play("Milestone")
+		Feel.purchased()
+		Hud.toast(`Done! +{tonumber(b) or 0} coins`, "good")
+	elseif kind == "Bought" then
+		Sound.play("Purchase")
+		Feel.purchased()
 	elseif kind == "Placed" then
 		task.delay(0.15, frameMonster)
 	elseif kind == "Fell" then
 		Sound.play("Whoosh")
 		task.delay(0.1, frameMonster)
-		fade.BackgroundTransparency = 0
-		TweenService:Create(fade, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()
+		flash(Config.Palette.Cream, 0)
 	end
 end)

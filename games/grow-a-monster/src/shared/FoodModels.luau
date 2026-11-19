@@ -20,6 +20,17 @@ function builders.Apple(m)
 	E(Vector3.new(0.5, 0.32, 0.16), SHINE, CFrame.new(-0.55, 0.45, -0.88) * CFrame.Angles(0, 0.5, 0.4), m, { Transparency = 0.15 })
 end
 
+-- Golden Melon: the Grove's prize. Striped gold ball with a curly stem.
+function builders.GoldenMelon(m)
+	E(Vector3.new(2.7, 2.4, 2.7), C.Gold, CFrame.new(0, 0, 0), m, { Material = Enum.Material.Metal, Reflectance = 0.1 })
+	for k = 0, 5 do
+		E(Vector3.new(0.35, 2.42, 2.72), C.GoldDark, CFrame.Angles(0, k * math.pi / 6, 0), m)
+	end
+	Build.cylinder(0.25, 0.6, P.WoodDark, CFrame.new(0, 1.35, 0), m)
+	E(Vector3.new(1, 0.15, 0.55), P.Grass, CFrame.new(0.45, 1.45, 0) * CFrame.Angles(0, 0, -0.35), m)
+	E(Vector3.new(0.55, 0.35, 0.18), SHINE, CFrame.new(-0.6, 0.55, -1.1) * CFrame.Angles(0, 0.5, 0.4), m, { Transparency = 0.15 })
+end
+
 function builders.Burger(m)
 	E(Vector3.new(2.5, 0.75, 2.5), C.Bun, CFrame.new(0, -0.75, 0), m)
 	Build.cylinder(2.6, 0.55, C.Patty, CFrame.new(0, -0.3, 0), m)

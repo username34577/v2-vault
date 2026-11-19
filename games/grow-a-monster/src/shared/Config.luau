@@ -56,7 +56,7 @@ Config.ThrowRange = 90 -- max studs from your own monster to throw
 Config.FlightTime = 0.45 -- seconds the food is in the air
 
 -- Passive income: coins per second = max(MinIncome, floor(Size * IncomePerSize))
-Config.IncomePerSize = 0.5
+Config.IncomePerSize = 0.1 -- v0.4: most coins come from feeding foraged snacks
 Config.MinIncome = 1 -- a brand-new monster still earns something
 
 -- Offline earnings: a share of normal income while away, capped
@@ -257,6 +257,95 @@ Config.Feel = {
 
 -- Camera looks over your head (studs above the default focus) so the monster's mouth stays in view
 Config.CameraOffset = Vector3.new(0, 3.5, 0)
+
+---------------------------------------------------------------------------
+-- v0.4 Snack Grove: forage food, sneak past the Gardener, carry it home, feed your monster
+---------------------------------------------------------------------------
+-- Snacks you can carry. Growth = size per snack fed; coins on feed = growth * CoinsPerGrowth.
+Config.Snacks = {
+	Apple = { Id = "Apple", Name = "Apple", Growth = 2, Model = "Apple" },
+	Burger = { Id = "Burger", Name = "Burger", Growth = 6, Model = "Burger" },
+	Cake = { Id = "Cake", Name = "Cake", Growth = 18, Model = "Cake" },
+	GoldenMelon = { Id = "GoldenMelon", Name = "Golden Melon", Growth = 80, Model = "GoldenMelon" },
+}
+Config.CoinsPerGrowth = 3
+
+Config.Grove = {
+	Angle = math.rad(22.5), -- between plots 1 and 2
+	Distance = 318, -- island centre to Grove centre
+	Radius = 78,
+	BridgeWidth = 12,
+	-- Plants: Kind, local position (X right, Z away from the main island), regrow seconds.
+	-- Better snacks grow closer to the Gardener's path.
+	Plants = {
+		{ Kind = "Apple", Pos = Vector3.new(-30, 0, -46), Regrow = 25 },
+		{ Kind = "Apple", Pos = Vector3.new(30, 0, -44), Regrow = 25 },
+		{ Kind = "Apple", Pos = Vector3.new(-48, 0, -16), Regrow = 25 },
+		{ Kind = "Apple", Pos = Vector3.new(50, 0, -12), Regrow = 25 },
+		{ Kind = "Burger", Pos = Vector3.new(-40, 0, 18), Regrow = 40 },
+		{ Kind = "Burger", Pos = Vector3.new(42, 0, 22), Regrow = 40 },
+		{ Kind = "Burger", Pos = Vector3.new(0, 0, -20), Regrow = 40 },
+		{ Kind = "Cake", Pos = Vector3.new(-18, 0, 44), Regrow = 60 },
+		{ Kind = "Cake", Pos = Vector3.new(22, 0, 46), Regrow = 60 },
+		{ Kind = "GoldenMelon", Pos = Vector3.new(0, 0, 58), Regrow = 150 },
+	},
+	ShakeTime = 0.6, -- hold seconds on the prompt
+	PromptRange = 9,
+	-- Tall grass patches (local X, Z, radius): standing inside one hides you from the Gardener
+	Grass = {
+		{ -22, -30, 7 }, { 24, -28, 7 }, { -46, 2, 8 }, { 46, 6, 8 },
+		{ -30, 32, 7 }, { 32, 34, 7 }, { 0, 12, 8 }, { -8, 46, 5 }, { 10, 50, 5 },
+	},
+	-- The Grumpy Gardener walks this loop (local positions), pausing at each point
+	Patrol = {
+		Vector3.new(-34, 0, 26), Vector3.new(0, 0, 36), Vector3.new(34, 0, 26),
+		Vector3.new(36, 0, -8), Vector3.new(0, 0, 0), Vector3.new(-36, 0, -8),
+	},
+	PatrolPause = 1.2,
+	GardenerSpeed = 9,
+	GardenerScale = 1.7,
+	SightRange = 30, -- studs
+	SightAngle = 38, -- degrees either side of where he faces
+	SightCheck = 0.15, -- seconds between checks
+	CaughtGrace = 0.35, -- you must stay seen this long before he catches you (fair, readable)
+	MonsterWaitDistance = 10, -- your monster waits this far outside the gate
+}
+
+-- Carry upgrades (bought at the stand by the Grove gate). Level 1 is free.
+Config.Backpacks = {
+	{ Level = 1, Name = "Pocket", Carry = 3, Price = 0 },
+	{ Level = 2, Name = "Bigger Backpack", Carry = 5, Price = 150 },
+	{ Level = 3, Name = "Snack Sack", Carry = 8, Price = 1500 },
+	{ Level = 4, Name = "Giant Lunchbox", Carry = 12, Price = 12000 },
+}
+
+-- Objectives, in order. After the list ends, "Repeat" deliveries keep going.
+-- Types: Deliver (feed N snacks), Golden (feed a Golden Melon), Backpack (own level N), Size (reach size)
+Config.Objectives = {
+	{ Type = "Deliver", Goal = 3, Text = "Your monster is starving! Bring 3 snacks from the Snack Grove", Coins = 40 },
+	{ Type = "Deliver", Goal = 6, Text = "Bring 6 more snacks. Burger Shrubs give more!", Coins = 80 },
+	{ Type = "Backpack", Goal = 2, Text = "Buy the Bigger Backpack at the stand by the Grove", Coins = 50 },
+	{ Type = "Golden", Goal = 1, Text = "Sneak the Golden Melon past the Gardener!", Coins = 250 },
+	{ Type = "Size", Goal = 250, Text = "Grow your monster to Size 250!", Coins = 500 },
+}
+Config.RepeatObjective = { Type = "Deliver", Goal = 10, Text = "Feed your monster 10 snacks", Coins = 150 }
+
+-- The companion monster (a rigged R15 creature). Scale grows with Size, capped to fit the plot.
+Config.Companion = {
+	MinScale = 1.5,
+	MaxScale = 4.5,
+	ScalePerRootSize = 0.06,
+	FollowDistance = 7, -- studs behind you
+	RunDistance = 22, -- further than this: it runs
+	TeleportDistance = 140, -- further than this: it pops next to you
+	WalkSpeed = 14,
+	RunSpeed = 26,
+	FeedRange = 40, -- studs from your monster to throw it a snack
+}
+function Config.companionScale(size: number): number
+	local C = Config.Companion
+	return math.min(C.MaxScale, C.MinScale + math.sqrt(math.max(size - 1, 0)) * C.ScalePerRootSize)
+end
 
 Config.Tutorial = {
 	MaxStartSize = 10, -- show the hint only to monsters this small (new players)

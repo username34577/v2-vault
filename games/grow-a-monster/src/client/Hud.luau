@@ -65,20 +65,21 @@ end
 
 local function buildMilestone()
 	local root = UI.card({
-		Name = "NextLook",
+		Name = "Objective",
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, 10),
-		Size = UDim2.fromOffset(250, 56),
+		Size = UDim2.fromOffset(300, 76),
 	}, gui)
 	UI.responsive(root)
 	mileTitle = UI.text({
 		Position = UDim2.fromOffset(12, 5),
-		Size = UDim2.new(1, -24, 0, 21),
+		Size = UDim2.new(1, -24, 0, 38),
 		TextColor3 = P.Sunny,
-		Text = "Next look",
+		TextWrapped = true,
+		Text = "",
 	}, root)
 	local track = UI.new("Frame", {
-		Position = UDim2.fromOffset(12, 30),
+		Position = UDim2.fromOffset(12, 48),
 		Size = UDim2.new(1, -24, 0, 18),
 		BackgroundColor3 = P.UINavyLight,
 	}, root)
@@ -188,7 +189,7 @@ local function buildThrow()
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.fromOffset(68, 116),
 		Size = UDim2.fromOffset(128, 36),
-		Text = "THROW",
+		Text = "FEED",
 		StrokeThickness = 3,
 		ZIndex = 4,
 	}, throwRoot)
@@ -231,7 +232,7 @@ local function buildToast()
 		Name = "ToastRoot",
 		BackgroundTransparency = 1,
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 76),
+		Position = UDim2.new(0.5, 0, 0, 96),
 		Size = UDim2.fromOffset(290, 58),
 	}, gui)
 	UI.responsive(holder)
@@ -316,6 +317,55 @@ function Hud.setMilestone(size: number)
 	local t = math.clamp((size - prevSize) / (nextOne.Size - prevSize), 0, 1)
 	TweenService:Create(mileFill, TweenInfo.new(0.25), { Size = UDim2.fromScale(math.max(t, 0.06), 1) }):Play()
 	mileCount.Text = `{Format.short(size)} / {Format.short(nextOne.Size)}`
+end
+
+-- Current objective (v0.4): text plus a progress bar.
+local lastObjective
+function Hud.setObjective(text: string, progress: number, goal: number)
+	mileTitle.Text = text
+	local t = if goal > 0 then math.clamp(progress / goal, 0, 1) else 0
+	TweenService:Create(mileFill, TweenInfo.new(0.25), { Size = UDim2.fromScale(math.max(t, 0.06), 1) }):Play()
+	mileCount.Text = `{Format.short(progress)} / {Format.short(goal)}`
+	if text ~= lastObjective then
+		if lastObjective ~= nil then
+			UI.pop(mileTitle.Parent, 1.12)
+		end
+		lastObjective = text
+	end
+end
+
+-- What you're carrying: shows the top snack on the FEED button and a count badge.
+local carryBadge
+function Hud.setCarry(count: number, cap: number, topModel: string?)
+	if not carryBadge then
+		carryBadge = UI.new("Frame", {
+			Name = "CarryBadge",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.new(0, 14, 0, 14),
+			Size = UDim2.fromOffset(56, 34),
+			BackgroundColor3 = P.Sunny,
+			ZIndex = 6,
+		}, throwButton)
+		UI.corner(carryBadge, UDim.new(0.5, 0))
+		UI.stroke(carryBadge, 2.5)
+		UI.text({ Name = "Count", Size = UDim2.fromScale(0.86, 0.8), Position = UDim2.fromScale(0.07, 0.1), Text = "", TextColor3 = P.Outline, ZIndex = 7 }, carryBadge)
+	end
+	carryBadge.Count.Text = `{count}/{cap}`
+	carryBadge.BackgroundColor3 = if count >= cap then P.Coral else P.Sunny
+	if topModel and topModel ~= "" then
+		throwFoodSet(topModel)
+	end
+	local empty = count == 0
+	throwButton.BackgroundColor3 = if empty then P.Coral:Lerp(P.UINavyLight, 0.6) else P.Coral
+	for _, d in throwButton:GetDescendants() do
+		if d:IsA("ViewportFrame") then
+			d.ImageTransparency = if empty then 0.65 else 0
+		end
+	end
+end
+
+function Hud.setShopVisible(on: boolean)
+	shopButton.Parent.Visible = on
 end
 
 function Hud.setShopBadge(on: boolean)

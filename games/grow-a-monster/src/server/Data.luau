@@ -50,6 +50,11 @@ local function newData()
 		Owned = { [Config.StartingFood] = true },
 		Equipped = Config.StartingFood,
 		LastSeen = 0,
+		-- v0.4 Snack Grove
+		Backpack = 1, -- Config.Backpacks level
+		Objective = 1, -- index into Config.Objectives (past the end = repeat objective)
+		ObjectiveProgress = 0,
+		SnacksFed = 0, -- lifetime
 	}
 end
 
@@ -77,6 +82,10 @@ local function migrate(data)
 	end
 	data.Coins = math.max(0, tonumber(data.Coins) or 0)
 	data.Size = math.max(1, tonumber(data.Size) or 1)
+	data.Backpack = math.clamp(math.floor(tonumber(data.Backpack) or 1), 1, #Config.Backpacks)
+	data.Objective = math.max(1, math.floor(tonumber(data.Objective) or 1))
+	data.ObjectiveProgress = math.max(0, math.floor(tonumber(data.ObjectiveProgress) or 0))
+	data.SnacksFed = math.max(0, math.floor(tonumber(data.SnacksFed) or 0))
 	data.Version = SCHEMA_VERSION
 	return data
 end

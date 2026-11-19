@@ -92,6 +92,11 @@ local function buildMiniIsland(folder, rng, k)
 	end
 
 	local a = (k - 0.5) / M.MiniIslands * TAU + rng:NextNumber(-0.3, 0.3)
+	-- keep clear of the Snack Grove island
+	local off = (a - Config.Grove.Angle + math.pi) % TAU - math.pi
+	if math.abs(off) < math.rad(42) then
+		a = Config.Grove.Angle + (if off >= 0 then 1 else -1) * math.rad(42)
+	end
 	local r = rng:NextNumber(M.MiniIslandRadius[1], M.MiniIslandRadius[2])
 	local home = Vector3.new(math.cos(a) * r, rng:NextNumber(-25, 12), math.sin(a) * r)
 	local period = rng:NextNumber(M.BobPeriod[1], M.BobPeriod[2])
