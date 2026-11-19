@@ -1,0 +1,23 @@
+{
+  "name": "GrowAMonster",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      }
+    },
+    "ServerScriptService": {
+      "GrowAMonster": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "GrowAMonsterClient": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}
