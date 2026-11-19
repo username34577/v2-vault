@@ -1,0 +1,15 @@
+{
+  "cases": [
+    {
+      "id": "after garden checkpoint",
+      "expected_spawn": "Garden",
+      "observed_spawn": "Garden",
+      "expected_routes": [
+        "gate"
+      ],
+      "observed_routes": [
+        "gate"
+      ]
+    }
+  ]
+}

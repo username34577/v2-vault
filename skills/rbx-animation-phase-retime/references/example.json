@@ -1,0 +1,21 @@
+{
+  "min_stretch": 0.65,
+  "max_stretch": 1.7,
+  "anchors": [
+    {
+      "id": "left contact",
+      "source": 0,
+      "target": 0
+    },
+    {
+      "id": "passing",
+      "source": 0.25,
+      "target": 0.3
+    },
+    {
+      "id": "right contact",
+      "source": 0.5,
+      "target": 0.6
+    }
+  ]
+}

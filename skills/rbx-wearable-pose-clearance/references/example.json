@@ -1,0 +1,17 @@
+{
+  "min_clearance": -0.015,
+  "required_poses": [
+    "body-a/idle",
+    "body-a/raise"
+  ],
+  "samples": [
+    {
+      "id": "body-a/idle",
+      "clearance": 0.03
+    },
+    {
+      "id": "body-a/raise",
+      "clearance": 0.005
+    }
+  ]
+}

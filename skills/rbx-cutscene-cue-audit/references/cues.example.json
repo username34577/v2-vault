@@ -1,0 +1,13 @@
+{
+  "expected": [
+    {"track": "shot-02/actor", "cue": "TrailOn", "time": 0.2, "tolerance": 0.034},
+    {"track": "shot-02/actor", "cue": "Impact", "time": 0.45, "tolerance": 0.034},
+    {"track": "shot-02/actor", "cue": "TrailOff", "time": 0.7, "tolerance": 0.034}
+  ],
+  "actual": [
+    {"track": "shot-02/actor", "cue": "TrailOn", "time": 0.2},
+    {"track": "shot-02/actor", "cue": "Impact", "time": 0.55},
+    {"track": "shot-02/actor", "cue": "Impact", "time": 0.56},
+    {"track": "shot-02/actor", "cue": "TrailOff", "time": 0.7}
+  ]
+}

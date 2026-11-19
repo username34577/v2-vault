@@ -1,0 +1,42 @@
+{
+  "center": [
+    0,
+    0,
+    0
+  ],
+  "axis": [
+    0,
+    1,
+    0
+  ],
+  "max_drift": 0.03,
+  "max_axis_error_deg": 2,
+  "samples": [
+    {
+      "id": "closed",
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "open",
+      "center": [
+        0.01,
+        0,
+        0
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ]
+    }
+  ]
+}

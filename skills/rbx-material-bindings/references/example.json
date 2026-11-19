@@ -1,0 +1,16 @@
+{
+  "expected": {
+    "shop-roof": {
+      "ColorMap": "123",
+      "NormalMap": "456",
+      "RoughnessMap": "789"
+    }
+  },
+  "actual": {
+    "shop-roof": {
+      "ColorMap": "123",
+      "NormalMap": "456",
+      "RoughnessMap": "789"
+    }
+  }
+}
