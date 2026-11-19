@@ -1,0 +1,29 @@
+{
+  "max_translation": 0.04,
+  "max_angle_deg": 4,
+  "handoffs": [
+    {
+      "id": "torch-to-guard",
+      "before": [
+        1,
+        2,
+        3
+      ],
+      "after": [
+        1.02,
+        2,
+        3
+      ],
+      "forward_before": [
+        0,
+        0,
+        1
+      ],
+      "forward_after": [
+        0,
+        0,
+        1
+      ]
+    }
+  ]
+}

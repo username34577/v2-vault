@@ -1,0 +1,20 @@
+{
+  "required": [
+    "head-a/crown",
+    "head-a/temple"
+  ],
+  "samples": [
+    {
+      "id": "head-a/crown",
+      "gap": 0.025,
+      "min": -0.02,
+      "max": 0.08
+    },
+    {
+      "id": "head-a/temple",
+      "gap": 0.01,
+      "min": -0.015,
+      "max": 0.05
+    }
+  ]
+}

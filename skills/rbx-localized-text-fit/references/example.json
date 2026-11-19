@@ -1,0 +1,18 @@
+{
+  "required": [
+    "de/phone/quest"
+  ],
+  "cases": [
+    {
+      "id": "de/phone/quest",
+      "text": [
+        158,
+        36
+      ],
+      "available": [
+        160,
+        44
+      ]
+    }
+  ]
+}

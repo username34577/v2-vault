@@ -1,0 +1,10 @@
+{
+  "min_visible_fraction": 0.6,
+  "stations": [
+    {
+      "id": "north fork",
+      "visible": 4,
+      "sampled": 5
+    }
+  ]
+}

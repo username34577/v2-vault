@@ -1,0 +1,25 @@
+{
+  "start": "Gate",
+  "goals": [
+    "Shrine"
+  ],
+  "grants": {
+    "Courtyard": [
+      "crest"
+    ]
+  },
+  "edges": [
+    {
+      "from": "Gate",
+      "to": "Courtyard",
+      "requires": []
+    },
+    {
+      "from": "Courtyard",
+      "to": "Shrine",
+      "requires": [
+        "crest"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "target_px_per_stud": 128,
+  "max_fraction_error": 0.15,
+  "surfaces": [
+    {
+      "id": "gate posts",
+      "uv_area": 0.0625,
+      "world_area": 4,
+      "texture_width": 1024,
+      "texture_height": 1024
+    }
+  ]
+}

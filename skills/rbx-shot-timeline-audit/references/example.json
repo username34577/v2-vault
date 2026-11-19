@@ -1,0 +1,17 @@
+{
+  "start": 0,
+  "end": 4,
+  "tolerance": 0.002,
+  "shots": [
+    {
+      "id": "wide",
+      "start": 0,
+      "end": 2
+    },
+    {
+      "id": "close",
+      "start": 2,
+      "end": 4
+    }
+  ]
+}

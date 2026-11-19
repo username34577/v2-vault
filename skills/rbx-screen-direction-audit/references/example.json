@@ -1,0 +1,17 @@
+{
+  "min_displacement": 0.03,
+  "cuts": [
+    {
+      "id": "chase-02",
+      "outgoing": [
+        0.35,
+        0.5
+      ],
+      "incoming": [
+        0.25,
+        0.42
+      ],
+      "allow_reverse": false
+    }
+  ]
+}
