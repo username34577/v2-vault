@@ -53,8 +53,20 @@ for _, food in Config.Foods do
 		Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(1, 0) }),
 		Lifetime = NumberRange.new(0.35, 0.65),
 		Speed = NumberRange.new(10, 18),
+		Drag = 3,
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.6, 0.1), NumberSequenceKeypoint.new(1, 1) }),
 	})
 end
+-- one big soft flash at the mouth: the "payoff" frame of the bite
+local flash = emitter({
+	Color = ColorSequence.new(P.Cream),
+	LightEmission = 1,
+	Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 2.5), NumberSequenceKeypoint.new(1, 5) }),
+	Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.25), NumberSequenceKeypoint.new(1, 1) }),
+	Lifetime = NumberRange.new(0.16, 0.16),
+	Speed = NumberRange.new(0, 0),
+	Acceleration = Vector3.zero,
+})
 local confetti = emitter({
 	Color = ColorSequence.new({
 		ColorSequenceKeypoint.new(0, P.Bubblegum),
@@ -220,6 +232,8 @@ function Feel.ate(serverModel, foodId: string, growth: number, mine: boolean)
 	local scale = MonsterView.scaleOf(serverModel)
 	local emitterForFood = crumbs[foodId] or crumbs[Config.StartingFood]
 	burst(emitterForFood, mouth, math.min(F.CrumbCount + math.floor(math.log10(math.max(growth, 1)) * 4), 24))
+	flash.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 2.5 * scale), NumberSequenceKeypoint.new(1, 5 * scale) })
+	burst(flash, mouth, 1)
 	if not mine then
 		return
 	end

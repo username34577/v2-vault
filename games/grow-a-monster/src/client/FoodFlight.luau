@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local FoodModels = require(ReplicatedStorage.Shared.FoodModels)
+local Build = require(ReplicatedStorage.Shared.Build)
 local MonsterView = require(script.Parent.MonsterView)
 
 local FoodFlight = {}
@@ -23,6 +24,9 @@ function FoodFlight.launch(serverModel, foodId: string, from: Vector3)
 		return
 	end
 	local model = FoodFlight.makeFood(foodId)
+	-- bigger food for bigger monsters so it still reads (up to 2.5x at max size)
+	local frac = (MonsterView.scaleOf(serverModel) - 1) / math.max(Config.MaxScale - 1, 1)
+	Build.scaleModel(model, 1 + 1.5 * math.clamp(frac, 0, 1))
 	model:PivotTo(CFrame.new(from))
 	model.Parent = folder
 	table.insert(flying, {
@@ -51,13 +55,7 @@ function FoodFlight.start()
 				local height = math.max(8, (to - f.From).Magnitude * 0.35)
 				local pos = f.From:Lerp(to, t) + Vector3.new(0, math.sin(t * math.pi) * height, 0)
 				local spin = f.Spin * (now - f.Started)
-				-- food swells on the way in so it still reads against a huge monster
-				local grow = 1 + t * 1.5 * (MonsterView.scaleOf(f.Monster) - 1) / math.max(Config.MaxScale - 1, 1)
 				f.Model:PivotTo(CFrame.new(pos) * CFrame.Angles(spin.X, spin.Y, spin.Z))
-				if grow ~= f.LastGrow then
-					f.LastGrow = grow
-					f.Model:ScaleTo(grow)
-				end
 			end
 		end
 	end)

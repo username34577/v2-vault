@@ -124,7 +124,13 @@ local function refreshAll()
 		lastEquipped = equipped
 		Hud.setEquipped(equipped)
 	end
-	local canBuy = Shop.refresh({ Coins = coins, Equipped = equipped, Owned = owned })
+	local canBuy
+	if Shop.isOpen() then
+		canBuy = Shop.refresh({ Coins = coins, Equipped = equipped, Owned = owned })
+	else
+		Shop.refresh({ Coins = coins, Equipped = equipped, Owned = owned }, true)
+		canBuy = Shop.canBuyAny(coins, owned)
+	end
 	Hud.setShopBadge(canBuy and not Shop.isOpen())
 	if ready then
 		Tutorial.onCanBuy(canBuy)

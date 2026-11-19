@@ -232,7 +232,7 @@ local function buildToast()
 		BackgroundTransparency = 1,
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, 76),
-		Size = UDim2.fromOffset(400, 46),
+		Size = UDim2.fromOffset(290, 58),
 	}, gui)
 	UI.responsive(holder)
 	toastFrame = UI.card({
@@ -241,12 +241,13 @@ local function buildToast()
 		Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(1, 1),
 		Visible = false,
-		Radius = UDim.new(0.5, 0),
+		Radius = UDim.new(0, 22),
 	}, holder)
 	toastText = UI.text({
-		Position = UDim2.fromOffset(16, 8),
-		Size = UDim2.new(1, -32, 1, -16),
+		Position = UDim2.fromOffset(16, 7),
+		Size = UDim2.new(1, -32, 1, -14),
 		Text = "",
+		TextWrapped = true,
 	}, toastFrame)
 end
 

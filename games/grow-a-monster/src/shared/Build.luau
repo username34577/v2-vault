@@ -101,6 +101,22 @@ function Build.model(name: string, parent)
 	return m
 end
 
+-- Uniformly scale a model's parts around its pivot by setting Size and position directly
+-- (sphere SpecialMeshes fill their part, so they follow the part size).
+function Build.scaleModel(model: Model, k: number)
+	if k == 1 then
+		return
+	end
+	local pivot = model:GetPivot()
+	for _, d in model:GetDescendants() do
+		if d:IsA("BasePart") then
+			local rel = pivot:ToObjectSpace(d.CFrame)
+			d.Size *= k
+			d.CFrame = pivot * (CFrame.new(rel.Position * k) * rel.Rotation)
+		end
+	end
+end
+
 function Build.lerp(a: Color3, b: Color3, t: number): Color3
 	return a:Lerp(b, t)
 end

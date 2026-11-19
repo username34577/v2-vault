@@ -206,44 +206,42 @@ end
 
 -- A diagonal light sweep across a button every few seconds ("shine").
 function UI.shine(button: GuiObject, period: number?)
-	-- A light strip slides across inside a clipping holder.
-	local holder = UI.new("Frame", {
-		Name = "ShineHolder",
-		BackgroundTransparency = 1,
-		Size = UDim2.fromScale(1, 1),
-		ClipsDescendants = true,
-		ZIndex = 2,
-	}, button)
-	local strip = UI.new("Frame", {
+	-- A full-size rounded overlay whose gradient band slides across: it keeps the button's
+	-- rounded corners (ClipsDescendants would not follow UICorner).
+	local overlay = UI.new("Frame", {
 		Name = "Shine",
 		BackgroundColor3 = Color3.new(1, 1, 1),
-		BackgroundTransparency = 0.55,
+		BackgroundTransparency = 0.35,
 		BorderSizePixel = 0,
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Size = UDim2.new(0, 22, 1, 0),
-		Position = UDim2.fromScale(-0.3, 0.5),
+		Size = UDim2.fromScale(1, 1),
+		Active = false,
 		ZIndex = 2,
-	}, holder)
-	-- soft edges; no Rotation, because ClipsDescendants does not clip rotated children
-	UI.new("UIGradient", {
+	}, button)
+	local buttonCorner = button:FindFirstChildOfClass("UICorner")
+	UI.corner(overlay, if buttonCorner then buttonCorner.CornerRadius else nil)
+	local gradient = UI.new("UIGradient", {
+		Rotation = 20,
 		Transparency = NumberSequence.new({
 			NumberSequenceKeypoint.new(0, 1),
-			NumberSequenceKeypoint.new(0.5, 0.2),
+			NumberSequenceKeypoint.new(0.44, 1),
+			NumberSequenceKeypoint.new(0.5, 0.1),
+			NumberSequenceKeypoint.new(0.56, 1),
 			NumberSequenceKeypoint.new(1, 1),
 		}),
-	}, strip)
+		Offset = Vector2.new(-1, 0),
+	}, overlay)
 	task.spawn(function()
-		while strip.Parent do
-			strip.Position = UDim2.fromScale(-0.3, 0.5)
-			if holder.Visible then
-				TweenService:Create(strip, TweenInfo.new(0.55, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
-					Position = UDim2.fromScale(1.3, 0.5),
+		while overlay.Parent do
+			gradient.Offset = Vector2.new(-1, 0)
+			if overlay.Visible then
+				TweenService:Create(gradient, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+					Offset = Vector2.new(1, 0),
 				}):Play()
 			end
 			task.wait(period or 2.4)
 		end
 	end)
-	return holder
+	return overlay
 end
 
 -- Coin icon: gold disc with a lighter inner disc.
@@ -267,6 +265,7 @@ function UI.coinIcon(parent, size: number)
 		Size = UDim2.fromScale(0.22, 0.16),
 		BackgroundColor3 = P.TextLight,
 		BackgroundTransparency = 0.1,
+		BorderSizePixel = 0,
 		Rotation = -30,
 	}, coin)
 	return coin

@@ -7,6 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local GuiService = game:GetService("GuiService")
 local UserInputService = game:GetService("UserInputService")
+local ContextActionService = game:GetService("ContextActionService")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local Format = require(ReplicatedStorage.Shared.Format)
@@ -287,11 +288,15 @@ function Shop.build(cb)
 end
 
 -- Recolour every card from the latest state (cheap: 6 cards, only on change).
-function Shop.refresh(newState)
+-- stateOnly = true just stores the state (the shop recolours itself when it opens).
+function Shop.refresh(newState, stateOnly: boolean?)
 	if newState then
 		for k, v in newState do
 			state[k] = v
 		end
+	end
+	if stateOnly then
+		return false
 	end
 	coinLabel.Text = Format.short(state.Coins)
 	local equippedFood = Config.FoodById[state.Equipped] or Config.FoodById[Config.StartingFood]
@@ -373,6 +378,13 @@ function Shop.open()
 	if UserInputService.GamepadEnabled then
 		GuiService.SelectedObject = cards[Config.Foods[1].Id].Button
 	end
+	-- B arrives as "game processed" while a button is selected, so bind it above the UI.
+	ContextActionService:BindActionAtPriority("CloseShop", function(_, inputState)
+		if inputState == Enum.UserInputState.Begin then
+			Shop.close()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.ButtonB)
 end
 
 function Shop.close()
@@ -380,6 +392,7 @@ function Shop.close()
 		return
 	end
 	isOpen = false
+	ContextActionService:UnbindAction("CloseShop")
 	TweenService:Create(panelPop, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Scale = 0.85 }):Play()
 	task.delay(0.14, function()
 		if not isOpen then
@@ -398,6 +411,16 @@ function Shop.toggle()
 	else
 		Shop.open()
 	end
+end
+
+-- True if any unowned food is affordable (no recolouring; used while the shop is closed).
+function Shop.canBuyAny(coins: number, owned): boolean
+	for _, food in Config.Foods do
+		if not owned[food.Id] and coins >= food.Price then
+			return true
+		end
+	end
+	return false
 end
 
 function Shop.isOpen(): boolean
