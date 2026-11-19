@@ -87,6 +87,47 @@ function Props.rock(parent, ground: CFrame, s: number, yaw: number)
 	return m
 end
 
+-- Wooden food crate with apples and a burger poking out of the top.
+function Props.crate(parent, ground: CFrame, s: number)
+	local m = Build.model("FoodCrate", parent)
+	local FC = Config.FoodColors
+	local w, h = 5 * s, 3.4 * s
+	Build.block(Vector3.new(w, h, w * 0.8), P.Wood, ground * CFrame.new(0, h / 2, 0), m, { CanCollide = true, CastShadow = true })
+	-- slats and corner posts so it reads as a crate, not a box
+	for _, y in { 0.28, 0.72 } do
+		Build.block(Vector3.new(w + 0.2, 0.45 * s, w * 0.8 + 0.2), P.WoodLight, ground * CFrame.new(0, h * y, 0), m)
+	end
+	for _, sx in { -1, 1 } do
+		for _, sz in { -1, 1 } do
+			Build.block(Vector3.new(0.6, h + 0.2, 0.6) * Vector3.new(s, 1, s), P.WoodDark, ground * CFrame.new(sx * (w / 2 - 0.2 * s), h / 2 + 0.1, sz * (w * 0.4 - 0.2 * s)), m)
+		end
+	end
+	local apples = { Vector3.new(-1.3, 0, -0.6), Vector3.new(0.2, 0.3, 0.7), Vector3.new(1.4, 0, -0.4), Vector3.new(-0.4, 0.2, -0.9) }
+	for _, a in apples do
+		Build.ball(1.5 * s, FC.AppleSkin, ground * CFrame.new(Vector3.new(a.X * s, h + 0.4 * s + a.Y * s, a.Z * s)), m)
+	end
+	Build.cylinder(1.9 * s, 0.6 * s, FC.Bun, ground * CFrame.new(0.9 * s, h + 0.9 * s, 0.6 * s) * CFrame.Angles(0.3, 0, 0.2), m)
+	Build.cylinder(1.9 * s, 0.35 * s, FC.Patty, ground * CFrame.new(0.9 * s, h + 1.25 * s, 0.7 * s) * CFrame.Angles(0.3, 0, 0.2), m)
+	return m
+end
+
+-- Garden lantern: post, warm glowing bulb, little roof.
+function Props.lantern(parent, ground: CFrame, s: number)
+	local m = Build.model("Lantern", parent)
+	local h = 6 * s
+	Build.cylinder(0.6 * s, h, P.WoodDark, ground * CFrame.new(0, h / 2, 0), m, { CastShadow = true })
+	local bulb = Build.ball(1.6 * s, P.Sunny, ground * CFrame.new(0, h + 0.6 * s, 0), m, { Material = Enum.Material.Neon })
+	local light = Instance.new("PointLight")
+	light.Color = P.Sunny
+	light.Range = 10 * s
+	light.Brightness = 0.6
+	light.Shadows = false
+	light.Parent = bulb
+	Build.cylinder(2.4 * s, 0.4 * s, P.Coral, ground * CFrame.new(0, h + 1.6 * s, 0), m)
+	Build.ball(0.6 * s, P.Coral, ground * CFrame.new(0, h + 2 * s, 0), m)
+	return m
+end
+
 -- Crown: gold band, five ball points, pink gems. Used on the leaderboard and on big monsters.
 function Props.crown(parent, base: CFrame, s: number, glowingGems: boolean?)
 	local m = Build.model("Crown", parent)

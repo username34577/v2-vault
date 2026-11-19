@@ -55,18 +55,23 @@ Config.ThrowCooldown = 0.3 -- seconds between throws (server enforced)
 Config.ThrowRange = 90 -- max studs from your own monster to throw
 Config.FlightTime = 0.45 -- seconds the food is in the air
 
--- Passive income: coins per second = floor(Size * IncomePerSize)
+-- Passive income: coins per second = max(MinIncome, floor(Size * IncomePerSize))
 Config.IncomePerSize = 0.5
+Config.MinIncome = 1 -- a brand-new monster still earns something
 
 -- Offline earnings: a share of normal income while away, capped
 Config.OfflineShare = 0.25
 Config.OfflineMaxSeconds = 2 * 60 * 60
 
--- Monster scale: visual scale grows slower than Size and is capped so plots don't overlap
+-- Monster scale: visual scale grows slower than Size and is capped so plots don't overlap.
+-- At MinScale (Size 1) the monster is ~14 studs tall: the star of the screen at spawn.
+Config.MinScale = 2.2
 Config.MaxScale = 10
+Config.ScalePerRootSize = 0.18
 function Config.scaleForSize(size: number): number
-	return math.min(Config.MaxScale, 1 + math.sqrt(math.max(size - 1, 0)) * 0.2)
+	return math.min(Config.MaxScale, Config.MinScale + math.sqrt(math.max(size - 1, 0)) * Config.ScalePerRootSize)
 end
+Config.MonsterRadius = 3 -- hitbox radius at scale 1 (studs)
 
 -- Plots in a ring around the map center
 Config.PlotCount = 8
@@ -157,6 +162,13 @@ Config.Map = {
 	FenceHeight = 4.5,
 	GateWidth = 14,
 	FeedingPadDiameter = 20,
+	-- Plot layout (local studs; +Z points away from the hub)
+	MonsterZ = 6, -- the monster's stage, a little past the plot centre
+	StageHeight = 1.4, -- the stage the monster stands on
+	StageDiameter = 24,
+	SpawnGap = 13, -- studs between the monster's front and where the player stands
+	SpawnMinZ = -28, -- never put the player closer to the gate than this
+	CrateLocal = Vector3.new(11, 0, -16), -- food crate beside the player
 	TreeCount = 8, -- one between each pair of plots
 	RimBushes = 18,
 	RimFlowers = 22,
@@ -173,6 +185,16 @@ Config.Map = {
 	-- Fall safety: below this height the server puts you back on your plot
 	FallY = -60,
 	FallCheckInterval = 0.2,
+}
+
+-- Plot decor that unlocks as your monster grows (built by the server on your plot)
+Config.PlotDecor = {
+	{ Size = 10, Id = "Flowerbeds", Name = "Flower beds" },
+	{ Size = 50, Id = "Lanterns", Name = "Lanterns" },
+	{ Size = 250, Id = "Bunting", Name = "Party bunting" },
+	{ Size = 1000, Id = "Trees", Name = "Fruit trees" },
+	{ Size = 5000, Id = "Statue", Name = "Golden statue" },
+	{ Size = 25000, Id = "Rainbow", Name = "Rainbow arch" },
 }
 
 Config.Leaderboard = {

@@ -499,7 +499,7 @@ end
 
 function MonsterView.scaleOf(serverModel): number
 	local view = views[serverModel]
-	return if view then view.Scale else 1
+	return if view then view.Scale else Config.MinScale
 end
 
 function MonsterView.start()

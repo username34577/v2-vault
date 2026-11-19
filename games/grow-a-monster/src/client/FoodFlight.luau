@@ -25,7 +25,7 @@ function FoodFlight.launch(serverModel, foodId: string, from: Vector3)
 	end
 	local model = FoodFlight.makeFood(foodId)
 	-- bigger food for bigger monsters so it still reads (up to 2.5x at max size)
-	local frac = (MonsterView.scaleOf(serverModel) - 1) / math.max(Config.MaxScale - 1, 1)
+	local frac = (MonsterView.scaleOf(serverModel) - Config.MinScale) / math.max(Config.MaxScale - Config.MinScale, 1)
 	Build.scaleModel(model, 1 + 1.5 * math.clamp(frac, 0, 1))
 	model:PivotTo(CFrame.new(from))
 	model.Parent = folder
