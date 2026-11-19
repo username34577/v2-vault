@@ -20,7 +20,7 @@ Notes from my TikTok Favorites (Roblox dev + Claude Code), pulled from auto-capt
 Whole accounts pulled from auto-captions, one note per creator.
 - [[creator-momentumcash]] — 115 "tell your Claude agent…" prompts: simulated playtesters, study-X-outside-Roblox, ideas, retention, art critic loops, ads, daily/weekly routines. Most useful. New skill: `skills/roblox-player-sims`.
 - [[creator-rxz-dev]] — 3 videos: anti-slop = skills + memory file + master prompt; his skills map to ones the vault already has.
-- [[creator-bbstudios4]] — no-talk showcase clips of Claude-made UI/cutscenes/animation; inspiration + a promo-clip format, no how-to.
+- [[creator-bbstudios4]] — 26 no-talk showcase clips, checked frame by frame: high bar for UI/VFX/cutscenes, no prompts shown, lots of borrowed IP; UI-juice ideas + a promo-clip format.
 - [[creator-palm-dev]] — incomplete (TikTok blocked the pull); links his 4 existing notes.
 
 ## By theme
