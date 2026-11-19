@@ -12,12 +12,34 @@ end
 
 -- Foods, cheapest first. Growth = how much Size one hit adds. Coins on hit = Growth.
 Config.Foods = {
-	{ Id = "Apple", Name = "Apple", Price = 0, Growth = 1, Color = Color3.fromRGB(220, 40, 40) },
-	{ Id = "Burger", Name = "Burger", Price = 60, Growth = 3, Color = Color3.fromRGB(170, 110, 50) },
-	{ Id = "Cake", Name = "Cake", Price = 400, Growth = 10, Color = Color3.fromRGB(255, 170, 210) },
-	{ Id = "Pizza", Name = "Pizza", Price = 2500, Growth = 35, Color = Color3.fromRGB(255, 190, 60) },
-	{ Id = "GoldenSteak", Name = "Golden Steak", Price = 15000, Growth = 120, Color = Color3.fromRGB(255, 215, 0) },
-	{ Id = "CosmicCandy", Name = "Cosmic Candy", Price = 90000, Growth = 450, Color = Color3.fromRGB(140, 80, 255) },
+	{ Id = "Apple", Name = "Apple", Price = 0, Growth = 1, Color = Color3.fromRGB(232, 65, 75) },
+	{ Id = "Burger", Name = "Burger", Price = 60, Growth = 3, Color = Color3.fromRGB(232, 162, 74) },
+	{ Id = "Cake", Name = "Cake", Price = 400, Growth = 10, Color = Color3.fromRGB(255, 143, 199) },
+	{ Id = "Pizza", Name = "Pizza", Price = 2500, Growth = 35, Color = Color3.fromRGB(255, 216, 74) },
+	{ Id = "GoldenSteak", Name = "Golden Steak", Price = 15000, Growth = 120, Color = Color3.fromRGB(245, 197, 66) },
+	{ Id = "CosmicCandy", Name = "Cosmic Candy", Price = 90000, Growth = 450, Color = Color3.fromRGB(183, 156, 255) },
+}
+
+-- Food part colours (shapes are built in Shared/FoodModels.luau)
+Config.FoodColors = {
+	AppleSkin = hex("#E8414B"),
+	AppleDimple = hex("#B02A38"),
+	Bun = hex("#E8A24A"),
+	BunTop = hex("#F0B35E"),
+	Patty = hex("#7A3E22"),
+	Tomato = hex("#FF5A4E"),
+	Sponge = hex("#FFB3D6"),
+	Frosting = hex("#FFF4E8"),
+	Cherry = hex("#E8414B"),
+	Dough = hex("#F2C27B"),
+	Cheese = hex("#FFD84A"),
+	Pepperoni = hex("#D9443A"),
+	Gold = hex("#F5C542"),
+	GoldDark = hex("#D9A322"),
+	Bone = hex("#FFF1D6"),
+	Candy = hex("#B79CFF"),
+	CandyBand = hex("#7FE8C8"),
+	Wrapper = hex("#FF8FC7"),
 }
 
 Config.FoodById = {}

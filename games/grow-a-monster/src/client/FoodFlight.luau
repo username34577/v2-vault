@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Config = require(ReplicatedStorage.Shared.Config)
-local Build = require(ReplicatedStorage.Shared.Build)
+local FoodModels = require(ReplicatedStorage.Shared.FoodModels)
 local MonsterView = require(script.Parent.MonsterView)
 
 local FoodFlight = {}
@@ -12,13 +12,9 @@ local FoodFlight = {}
 local flying = {}
 local folder
 
--- Returns a Model for a food id. Replaced with real food shapes in FoodModels (step 3).
+-- Thrown food looks exactly like the shop icon.
 local function makeFood(foodId: string)
-	local food = Config.FoodById[foodId] or Config.FoodById[Config.StartingFood]
-	local model = Instance.new("Model")
-	Build.ball(1.5, food.Color, CFrame.new(), model)
-	model.PrimaryPart = model:FindFirstChildWhichIsA("BasePart")
-	return model
+	return FoodModels.build(foodId)
 end
 FoodFlight.makeFood = makeFood
 
@@ -55,8 +51,8 @@ function FoodFlight.start()
 				local height = math.max(8, (to - f.From).Magnitude * 0.35)
 				local pos = f.From:Lerp(to, t) + Vector3.new(0, math.sin(t * math.pi) * height, 0)
 				local spin = f.Spin * (now - f.Started)
-				-- food grows a little near the end so it reads against a huge monster
-				local grow = 1 + t * 0.25 * (MonsterView.scaleOf(f.Monster) - 1) / math.max(Config.MaxScale - 1, 1)
+				-- food swells on the way in so it still reads against a huge monster
+				local grow = 1 + t * 1.5 * (MonsterView.scaleOf(f.Monster) - 1) / math.max(Config.MaxScale - 1, 1)
 				f.Model:PivotTo(CFrame.new(pos) * CFrame.Angles(spin.X, spin.Y, spin.Z))
 				if grow ~= f.LastGrow then
 					f.LastGrow = grow
