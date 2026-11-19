@@ -32,6 +32,8 @@ local testRemote = ReplicatedStorage:WaitForChild("VFXTestCmd")
 local probeRemote = ReplicatedStorage:WaitForChild("VFXTestProbe")
 
 local results = {}
+-- Most extra p95 frame time (ms) a Snatch-the-Sun-sized effect load may add over the no-effects baseline.
+local PERF_P95_BUDGET_MS = 2
 local function record(test: string, name: string, pass: boolean?, detail)
 	local status = if pass == nil then "INFO" elseif pass then "PASS" else "FAIL"
 	table.insert(results, { test = test, check = name, status = status, detail = detail })
@@ -228,6 +230,17 @@ local function testPerformance()
 	if not root then
 		return
 	end
+	-- Baseline with no effects. Studio (and most devices) cap the frame rate, so absolute
+	-- frame time sits at the cap plus jitter (e.g. p95 ~17.9 ms at a 60 FPS cap) whether or not
+	-- effects run. We judge the cost the effects ADD on top of this baseline instead.
+	Effects.clear()
+	task.wait(1)
+	local base = Perf.measure(5)
+	record("performance", "baseline (no effects)", nil, {
+		avgFps = math.floor(base.avgFps),
+		p95Ms = math.floor(base.p95Ms * 10) / 10,
+		worstMs = math.floor(base.worstMs * 10) / 10,
+	})
 	for _, preset in { "Low", "Medium", "High" } do
 		Quality.set(preset)
 		Effects.attach("perf", "SunAura", root, { keepLights = true })
@@ -241,9 +254,15 @@ local function testPerformance()
 		local m = Perf.measure(5)
 		running = false
 		Effects.detach("perf", true)
-		record("performance", `{preset}: 1 aura + SunBurst every 0.25 s`, m.p95Ms <= 16.7, {
+		-- Pass if the effects add at most PERF_P95_BUDGET_MS to p95 frame time and keep at least
+		-- 95 % of the baseline frame rate.
+		local addedMs = m.p95Ms - base.p95Ms
+		local fpsRatio = if base.avgFps > 0 then m.avgFps / base.avgFps else 1
+		record("performance", `{preset}: 1 aura + SunBurst every 0.25 s`, addedMs <= PERF_P95_BUDGET_MS and fpsRatio >= 0.95, {
 			avgFps = math.floor(m.avgFps),
 			p95Ms = math.floor(m.p95Ms * 10) / 10,
+			addedP95Ms = math.floor(addedMs * 10) / 10,
+			fpsVsBaseline = math.floor(fpsRatio * 100) / 100,
 			worstMs = math.floor(m.worstMs * 10) / 10,
 			savedQuality = (function()
 				local ok, v = pcall(function()
