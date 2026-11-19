@@ -108,8 +108,9 @@ Only results from a real Studio run go here. Paste each `VFXLAB_RESULTS` line un
 
 | Date | Device / settings | Suite or test | Result | Notes |
 |---|---|---|---|---|
-| 2026-11-19 | PC (Lenovo LOQ 15, RTX 4060), Studio Play Solo, graphics Automatic, lab Medium | local suite (T) | **29 checks, 26 PASS, 3 FAIL** | All render, visibility, cleanup, camera and respawn checks pass. The 3 FAILs are the performance checks (see below) |
-| (not run) | Studio Local Server, 2 players | replication suite (Y) | not run yet | |
+| 2026-11-19 13:30 | PC (Lenovo LOQ 15, RTX 4060), Studio Play Solo, graphics Automatic | local suite (T), old perf test | 29 checks, 26 PASS, 3 FAIL | The 3 FAILs were the performance checks: absolute p95 <= 16.7 ms at Studio's 60 FPS cap (test-design issue, fixed in a74599e) |
+| 2026-11-19 13:51 | same PC and settings | local suite (T), baseline-relative perf test (a74599e) | **30 checks, 0 FAIL** | New INFO line: no-effects baseline |
+| 2026-11-19 | PC, Studio **Server + 2 clients** (Player1, Player2) | replication suite (Y) | **6/6 PASS** (+1 INFO: clients = 2) | Aura seen on all clients; steal burst on every client; aura leaves old carrier and appears on the new one on all clients; victory on every client; aura gone everywhere after drop |
 | (not run) | PC, lowest graphics, lab Low | local suite (T) | not run yet | |
 | (not run) | Device emulator (phone) | local suite (T) + keys 1-6 | not run yet | |
 | (not run) | Real phone | keys 1-6, B | not run yet | |
@@ -117,10 +118,15 @@ Only results from a real Studio run go here. Paste each `VFXLAB_RESULTS` line un
 
 | Preset | Device | avg FPS | p95 ms | worst ms | played / culled / capped |
 |---|---|---|---|---|---|
-| Low | PC, Studio | 59 | 17.9 | 19.2 | |
-| Medium | PC, Studio | 59 | 17.9 | |  |
-| High | PC, Studio | 59 | 17.9 | 19.4 | |
+| Baseline (no effects) | PC RTX 4060, Studio solo, 60 FPS cap | 60 | 17.9 | 18.7 | n/a |
+| Low | PC RTX 4060, Studio solo | 60 | 17.8 (−0.1 vs baseline) | 18.9 | |
+| Medium | PC RTX 4060, Studio solo | 59 | 17.7 (−0.2) | 18.9 | |
+| High | PC RTX 4060, Studio solo | 60 | 17.8 (−0.1) | 18.7 | |
 
-**2026-11-19 performance FAILs, read carefully.** The check is `p95Ms <= 16.7` (a strict 60 FPS). Studio caps the client at 60 FPS, and all three presets measured the same p95 17.9 ms / avg 59 FPS. If the effects were the cost, Low would be faster than High; it isn't. So these FAILs most likely show the 60 FPS cap plus frame jitter, not effect cost. **Not yet proven:** confirm by running B (benchmark) with no effects active as a baseline, and run the suite on lowest graphics and on the phone emulator. Suggested test fix: compare against a no-effects baseline (pass if p95 rises by less than ~2 ms) instead of an absolute 16.7 ms.
+**2026-11-19 performance: what is and isn't proven.**
+- The first run's 3 FAILs were a test-design issue: the check demanded absolute p95 <= 16.7 ms, but Studio caps at 60 FPS, so the no-effects baseline itself is p95 17.9 ms. All three presets measured the same.
+- Fix (`a74599e`): measure a 5 s no-effects baseline first; pass if effects add <= 2 ms p95 and keep >= 95 % of baseline FPS. Absolute avg FPS, p95 and worst frame are still recorded for every preset (table above).
+- Result on this PC: effects add **no measurable cost** (−0.2 to −0.1 ms, i.e. within noise).
+- **This does NOT prove mobile performance.** At a 60 FPS cap on an RTX 4060 there is lots of headroom, so cost stays hidden until it exceeds the frame budget. A phone has far less headroom. Still needed: Device emulator run (not real hardware either), a **real phone** (Studio "Play on device" / published test place), and MicroProfiler CPU/GPU ms per effect for a direct cost number.
 
-Still not run: replication suite (Y, needs Local Server with 2 players), phone emulator, lowest graphics, visual check.
+Still not run: phone emulator, real phone, lowest graphics, visual check of frozen phases.

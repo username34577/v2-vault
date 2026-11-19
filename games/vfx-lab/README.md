@@ -7,7 +7,7 @@ Docs in the vault: `LihFolk Vault V2/Roblox Development/Resources/VFX/Roblox VFX
 ## Status (2026-11-19)
 
 - Built and checked **outside Studio**: `bash tools/check.sh` passes (recipes clean, critic gate, kit export, manifest, Luau syntax, Roblox API names). Effects previewed in the roblox-vfx browser sim (`library/previews/`).
-- **First Studio run 2026-11-19 (PC):** local suite (T) 29 checks, 26 PASS, 3 FAIL (performance only, likely the 60 FPS cap; see the vault's *Test Lab* note). Replication suite (Y) and phone checks not run yet.
+- **Studio runs 2026-11-19 (PC, RTX 4060):** local suite (T) **30/30 PASS** after the perf-test fix (a74599e); replication suite (Y) with server + 2 clients **6/6 PASS**. PC perf shows no measurable effect cost; mobile is **not** verified yet (see the vault's *Test Lab* note).
 
 ## Layout
 
