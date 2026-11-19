@@ -15,8 +15,12 @@ local FxRemote = Remotes:WaitForChild("Fx")
 
 local Decor = require(script.Parent.Decor)
 local Sound = require(script.Parent.Sound)
+local MonsterView = require(script.Parent.MonsterView)
+local FoodFlight = require(script.Parent.FoodFlight)
 Decor.start()
 Sound.preload()
+MonsterView.start()
+FoodFlight.start()
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -321,8 +325,20 @@ fade.BorderSizePixel = 0
 fade.Active = false
 fade.Parent = fadeGui
 
-FxRemote.OnClientEvent:Connect(function(kind)
-	if kind == "Fell" then
+MonsterView.onMilestone = function(_model, milestone, isMine)
+	if isMine then
+		Sound.play("Milestone")
+		showToast(`New look unlocked: {milestone.Name}!`)
+	end
+end
+
+FxRemote.OnClientEvent:Connect(function(kind, monster, foodId, extra)
+	if kind == "Throw" and typeof(monster) == "Instance" then
+		MonsterView.expect(monster, Config.FlightTime)
+		FoodFlight.launch(monster, foodId, extra)
+	elseif kind == "Eat" and typeof(monster) == "Instance" then
+		MonsterView.gulp(monster, tonumber(extra) or 1)
+	elseif kind == "Fell" then
 		Sound.play("Whoosh")
 		fade.BackgroundTransparency = 0
 		TweenService:Create(fade, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()

@@ -143,7 +143,7 @@ local function onPlayerAdded(player)
 	local model = Monster.create(player, plot, plotGround[plot])
 	state[player] = { Profile = profile, Plot = plot, Monster = model, LastThrow = 0 }
 	makeLeaderstats(player)
-	Monster.setSize(model, data.Size, player.DisplayName, false)
+	Monster.setSize(model, data.Size)
 	publish(player)
 
 	-- Offline earnings (from the TikTok notes: boosts retention)
@@ -222,7 +222,8 @@ ThrowRemote.OnServerEvent:Connect(function(player)
 
 	local food = Config.FoodById[s.Profile.Data.Equipped] or Config.FoodById[Config.StartingFood]
 	local from = root.Position + Vector3.new(0, 2, 0) + root.CFrame.LookVector * 2
-	Monster.throwFood(s.Monster, from, food.Color, function()
+	FxRemote:FireAllClients("Throw", s.Monster, food.Id, from)
+	Monster.throwFood(s.Monster, function()
 		local current = state[player]
 		if current ~= s or not Data.get(player) then
 			return -- player left mid-throw
@@ -230,9 +231,9 @@ ThrowRemote.OnServerEvent:Connect(function(player)
 		local data = s.Profile.Data
 		data.Size += food.Growth
 		data.Coins += food.Growth
-		Monster.setSize(s.Monster, data.Size, player.DisplayName, true)
-		Monster.eatEffect(s.Monster, food.Color)
+		Monster.setSize(s.Monster, data.Size)
 		publish(player)
+		FxRemote:FireAllClients("Eat", s.Monster, food.Id, food.Growth)
 	end)
 end)
 

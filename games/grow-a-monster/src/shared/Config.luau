@@ -66,6 +66,8 @@ Config.Palette = {
 	Sky = hex("#6EC6FF"),
 	Lilac = hex("#B79CFF"),
 	Peach = hex("#FFB38A"),
+	Coral = hex("#FF7A6B"),
+	Tangerine = hex("#FFA94D"),
 	Cream = hex("#FFF1D6"), -- paths, plaza
 	Rock = hex("#A89A92"), -- warm stone, never grey-black
 	RockDark = hex("#8A7C7A"),
@@ -156,6 +158,42 @@ Config.Leaderboard = {
 	RefreshSeconds = 2,
 	BoardWidth = 30,
 	BoardHeight = 36,
+}
+
+---------------------------------------------------------------------------
+-- Monster look (client-side visuals; the server only owns Size)
+---------------------------------------------------------------------------
+Config.Monster = {
+	-- One colour pair per plot: warm body + cool spots (or the reverse).
+	Colors = {
+		{ Body = Config.Palette.Bubblegum, Spot = Config.Palette.Mint },
+		{ Body = Config.Palette.Sunny, Spot = Config.Palette.Sky },
+		{ Body = Config.Palette.Mint, Spot = Config.Palette.Bubblegum },
+		{ Body = Config.Palette.Sky, Spot = Config.Palette.Sunny },
+		{ Body = Config.Palette.Peach, Spot = Config.Palette.Lilac },
+		{ Body = Config.Palette.Lilac, Spot = Config.Palette.Peach },
+		{ Body = Config.Palette.Coral, Spot = Config.Palette.Mint },
+		{ Body = Config.Palette.Tangerine, Spot = Config.Palette.Sky },
+	},
+	MouthColor = hex("#5A2236"),
+	TongueColor = hex("#FF6F9E"),
+	-- Idle motion
+	BreathPeriod = 1.6, -- seconds per squash cycle
+	BreathAmount = 0.045, -- squash fraction
+	HopEvery = { 4, 8 }, -- seconds between happy hops
+	HopHeight = 0.7, -- studs at scale 1
+	BlinkEvery = { 2.2, 5 },
+	BlinkTime = 0.12,
+	GulpSquash = 0.18, -- how hard the body squashes when it eats
+	GrowSpeed = 6, -- how fast the visual scale catches up (per second)
+	-- Cosmetic unlocks at size milestones (in order)
+	Milestones = {
+		{ Size = 25, Id = "Sprout", Name = "Leaf Sprout" },
+		{ Size = 100, Id = "Horns", Name = "Horns" },
+		{ Size = 1000, Id = "Wings", Name = "Wings" },
+		{ Size = 10000, Id = "Crown", Name = "Crown" },
+		{ Size = 100000, Id = "Aura", Name = "Sparkle Aura" },
+	},
 }
 
 ---------------------------------------------------------------------------
