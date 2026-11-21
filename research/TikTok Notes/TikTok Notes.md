@@ -16,6 +16,21 @@ Notes from my TikTok Favorites (Roblox dev + Claude Code), pulled from auto-capt
 5. **Your vault is the edge.** Put your game's art style and standards in it, organized with master notes Claude reads first. → [[obsidian-vault-for-ai]], [[obsidian-agent-structure]]
 6. **Test ideas fast** before sinking weeks into one. Remix proven mechanics; don't clone games. → [[ship-many-small-games]], [[dead-game-method]]
 
+**Before any new TikTok batch, check [[TikTok Research Index]]** (every video already researched, plus whole-creator coverage) to avoid duplicate work.
+
+## Favorites review 2026-11-20 (80 newest, claims checked)
+Full list with status for all 80: [[favorites-2026-11-20]]. New notes:
+- [[kids-select-gate-and-ads]] — getting out of 16+ (threshold now 100, verified) (@oksitaine)
+- [[thumbnail-and-ad-testing-roundup]] — how many thumbnails, $5/day tests, ForgeGUI, qptr.io (4 creators)
+- [[sound-design-judge-loop]] — audio model as a judge, real licensed sounds ship (@oddblockstudios)
+- [[onboarding-popups-and-invisible-tutorials]] — let them play first, loaner gear, kids don't read (@captainamado)
+- [[claude-design-for-roblox]] — shop UI before/after, voxel bosses (@jarvislabsreal, @crazz977)
+- [[claude-code-prompt-rewriter-mod]] — one-button prompt rewriter (@justinyun)
+- [[ai-agent-studio-apps]] — multi-agent studio app pitch, unverified (@trevsagents)
+- [[art-direction-and-vault-claims]] — style from references; what vaults really do (5 creators)
+- [[market-signals-and-niches]] — co-play, 18+ DevEx, open niches, whales (several)
+- [[ui-plugins-autoscale-emitter]] — AutoScale Lite, 2D Emitter (@uglyydev)
+
 ## Creator deep dives (2026-11-19)
 Whole accounts pulled from auto-captions, one note per creator.
 - [[creator-momentumcash]] — 115 "tell your Claude agent…" prompts: simulated playtesters, study-X-outside-Roblox, ideas, retention, art critic loops, ads, daily/weekly routines. Most useful. New skill: `skills/roblox-player-sims`.
@@ -75,9 +90,9 @@ Whole accounts pulled from auto-captions, one note per creator.
 ### Other
 - [[ai-agents-business-cost]] — AI agents running businesses (hype) (@androoagi)
 
-### Not captured (photo slideshows)
-- [@1zzy7x](https://www.tiktok.com/@1zzy7x/photo/7700421671148080398) — Photo slideshow tagged #claude #roblox. Text is in the images, not captured.
-- [@trulyrbx](https://www.tiktok.com/@trulyrbx/photo/7704860090578291998) — Photo slideshow: "skills are larp" #robloxdev #claude. Text is in the images, not captured.
+### Photo slideshows (read 2026-11-20)
+- [@1zzy7x](https://www.tiktok.com/@1zzy7x/photo/7700421671148080398) — a question over 4 boss models; no method. See [[favorites-2026-11-20]].
+- [@trulyrbx](https://www.tiktok.com/@trulyrbx/photo/7704860090578291998) — list of "Obsidian skills"; see [[art-direction-and-vault-claims]].
 
 ## Skip list
 - [[opencode-rea-app-cloning]] — app cloning, ToS/copyright risk

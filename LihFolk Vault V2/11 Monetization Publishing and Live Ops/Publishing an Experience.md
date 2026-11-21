@@ -68,7 +68,7 @@ Requirements apply to first releases, **updates**, Publish As to another game, a
 |---|---|---|---|
 | Publishing fee | 1,000 Robux per game, refundable if the game keeps 25 highly engaged players for 60 days without moderation | One-time refundable fee (amount not stated); refund 90 days after eligibility, or 90 days after payment if never eligible | 1,000 Robux, refundable, or 2 consecutive months of Plus/Premium |
 | Expedited review | 50,000 Robux per game; up to 48 h review; refund request after 90 days in good standing with 25 highly engaged players | 50,000 Robux | 100,000 Robux; up to 48 h |
-| Entry threshold | n/a | 250 unique plays from highly engaged, age-checked players within 60 days | 500 Highly Engaged Players to enter |
+| Entry threshold | n/a | **100** unique plays from highly engaged, age-checked 16+ players within 60 days (page read 2026-11-20; was 250 from Aug 19, 2026) | 500 Highly Engaged Players to enter (since lowered: 250 on Aug 19, 100 in Nov 2026) |
 | Keep-eligibility threshold | 25 highly engaged players (60 days) | n/a | Lowered from 100 to 25 over the last 60 days (July 16, 2026) |
 
 Fees are not refunded if the game is permanently moderated or taken down for Community Standards violations (Docs). For a minor violation found in expedited review you fix and resubmit, and the 48-hour clock restarts.
