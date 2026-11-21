@@ -540,10 +540,12 @@ One line per note: `title | path | tags | ~whole-note tokens`. Grep it for an AP
 - AI-Ready Project Boilerplate - Repo Layout Agents Navigate Well | 16 MCP and Agents/AI-Ready Project Boilerplate - Repo Layout Agents Navigate Well.md | agents, ai, workflow, rojo, repo-layout, documentation, claude-code | ~2.3k tok
 - Agent Handoff Notes - Project State and Resume Templates | 16 MCP and Agents/Agent Handoff Notes - Project State and Resume Templates.md | agents, ai, workflow, handoff, documentation, claude-code | ~2.1k tok
 - Agent Review Loops and Guardrails in Practice | 16 MCP and Agents/Agent Review Loops and Guardrails in Practice.md | agents, mcp, guardrails, review, hooks, permissions, verification, claude-code | ~6.3k tok
-- Automated Studio Test Runs (rbxtest) | 16 MCP and Agents/Automated Studio Test Runs (rbxtest).md | mcp, studio, testing, agents, tooling | ~1.3k tok
+- Agent Workflows - Review, Learning, Style and First 60 Seconds | 16 MCP and Agents/Agent Workflows - Review, Learning, Style and First 60 Seconds.md | agents, workflow, review, learning, onboarding, style | ~880 tok
+- Automated Studio Test Runs (rbxtest) | 16 MCP and Agents/Automated Studio Test Runs (rbxtest).md | mcp, studio, testing, agents, tooling | ~1.5k tok
 - Blender MCP | 16 MCP and Agents/Blender MCP.md | mcp, blender, ai, agents, modeling, pipeline | ~4.0k tok
 - Built-In Studio MCP vs Community MCP Servers - Migration Guide | 16 MCP and Agents/Built-In Studio MCP vs Community MCP Servers - Migration Guide.md | mcp, studio, agents, migration, tooling | ~2.1k tok
 - Case Study - Building a Game with AI Agents | 16 MCP and Agents/Case Study - Building a Game with AI Agents.md | case-study, mcp, agents, production, workflow | ~3.4k tok
+- Luau Toolchain and Quality Gate | 16 MCP and Agents/Luau Toolchain and Quality Gate.md | tooling, luau, lint, type-checking, selene, stylua, luau-lsp, rojo, ci | ~1.0k tok
 - MCP Workflows for Building Worlds | 16 MCP and Agents/MCP Workflows for Building Worlds.md | mcp, agents, world-building, terrain, workflow | ~3.6k tok
 - MCP Workflows for Scripting and Debugging | 16 MCP and Agents/MCP Workflows for Scripting and Debugging.md | mcp, agents, scripting, debugging, luau, workflow | ~4.7k tok
 - Multiple Agents in One Studio | 16 MCP and Agents/Multiple Agents in One Studio.md | mcp, agents, coordination, studio, workflow, collaboration | ~3.2k tok
@@ -551,6 +553,7 @@ One line per note: `title | path | tags | ~whole-note tokens`. Grep it for an AP
 - Safety Rules for AI Agents in Studio | 16 MCP and Agents/Safety Rules for AI Agents in Studio.md | mcp, agents, safety, rules, studio, workflow | ~3.5k tok
 - Setting Up MCP Clients | 16 MCP and Agents/Setting Up MCP Clients.md | mcp, setup, claude, cursor, vscode, agents | ~3.6k tok
 - Studio Plugins and Local HTTP Bridges | 16 MCP and Agents/Studio Plugins and Local HTTP Bridges.md | plugins, http, tooling, studio, bridges, mcp | ~4.6k tok
+- Third-Party Claude Plugins for Roblox - Audit (Nov 2026) | 16 MCP and Agents/Third-Party Claude Plugins for Roblox - Audit (Nov 2026).md | agents, plugins, tools, security, audit, mcp | ~1.1k tok
 - What Is MCP | 16 MCP and Agents/What Is MCP.md | mcp, ai, agents, protocol, tooling | ~4.8k tok
 - Writing Your Own MCP Server | 16 MCP and Agents/Writing Your Own MCP Server.md | mcp, python, typescript, plugins, tooling, agents | ~5.7k tok
 

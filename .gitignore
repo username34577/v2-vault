@@ -24,3 +24,7 @@ LihFolk Vault V2/.smart-env/
 # rbxtest temp files
 .rbxtest-sync.luau
 .rbxtest-result.json
+
+# lint tool downloads (luau-lsp Roblox definitions)
+dev/lint/.cache/
+sourcemap.json

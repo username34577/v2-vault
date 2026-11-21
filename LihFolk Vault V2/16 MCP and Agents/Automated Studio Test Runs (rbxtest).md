@@ -10,7 +10,7 @@ tags: [mcp, studio, testing, agents, tooling, type/guide, area/ai, area/testing,
 > - Both match the earlier manual results. Reports: `test-reports/vfx-lab/20261119-142030-local.json` and...
 > - Windows-only setup tested so far; needs Studio open with the MCP server on and Rojo connected.
 >
-> Cost: TL;DR ~130 tok · whole note ~1.3k tok. Read more: ## 1. What the Studio MCP can and can't do (measured) · ## 3. Verified results (2026-11-19, VFX Lab, commit 1b1ee63)
+> Cost: TL;DR ~130 tok · whole note ~1.5k tok. Read more: ## 1. What the Studio MCP can and can't do (measured) · ## 3. Verified results (2026-11-19, VFX Lab, commit 1b1ee63)
 <!-- tldr:end -->
 
 rbxtest lets Claude Code run a game's test suites in the open Roblox Studio with no clicking. It checks that Rojo is in sync, starts each suite through StudioTestService (solo or multi-client), captures the exact results as JSON, saves a report per run and compares it with the previous one. Code and full reference: `dev/rbxtest/README.md` in the repo. Claude Code command: `/rbx-test <game folder>`.
@@ -72,6 +72,10 @@ Both match the earlier manual results. Reports: `test-reports/vfx-lab/20261119-1
 | High | 68.0 ms | 15 | +0.1 ms, 0.99× |
 
 The manual run had a 60 FPS baseline. Here even the no-effects baseline was 15 FPS, so the effects are not the cause. The likely cause is that Studio was behind other windows during the run. That hasn't been tested yet. The relative check still passes, but **absolute FPS from an unattended run is not meaningful**, and none of this says anything about phones.
+
+### Report handling, tested without Studio (2026-11-20)
+
+`python dev/rbxtest/test_rbxtest.py` (9 cases, also in CI) checks the part that decides pass or fail. It found and fixed two gaps: a check that passed last run and **disappeared** now counts as a regression, and a **completed run with no results** now fails. Clean run exit 0; FAIL, error, timeout, unknown suite, PASS→FAIL and vanished checks exit 1; malformed reports exit 2 and nothing is saved. The Studio side has not been re-run since this change; the next `/rbx-test vfx-lab` on the laptop confirms it end to end.
 
 ## 4. Known limits
 

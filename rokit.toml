@@ -1,0 +1,7 @@
+# Pinned Luau toolchain for this repo. Install once per machine with Rokit (no admin rights needed):
+#   rokit install        (run in the repo folder; see dev/lint/README.md)
+[tools]
+rojo = "rojo-rbx/rojo@7.7.1"
+selene = "Kampfkarren/selene@0.32.0"
+stylua = "JohnnyMorganz/StyLua@2.6.0"
+luau-lsp = "JohnnyMorganz/luau-lsp@1.70.1"

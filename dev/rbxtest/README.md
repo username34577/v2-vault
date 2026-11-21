@@ -31,7 +31,9 @@ No network listener, no HttpService, no plugin to install. Everything goes throu
 
 Report schema 1: `{schema:1, suite, status: completed|error|timeout|unknown_suite, results:[...], error?, meta:{place, placeId, startedAt, durationS, players, args, savedAt, commit}}`.
 
-`save` exit codes: **0** completed with no FAIL and no regression · **1** FAIL, run error/timeout, or a check that went PASS→FAIL · **2** the report itself is invalid.
+`save` exit codes: **0** completed with at least one result, no FAIL and no regression · **1** FAIL, run error/timeout/unknown suite, a check that went PASS→FAIL, a previously passing check that disappeared, or a completed run with no results · **2** the report itself is invalid (nothing is saved).
+
+Self-test (no Studio needed): `python dev/rbxtest/test_rbxtest.py` runs 9 cases covering every exit path; it also runs in CI.
 
 ## The spawn snippet (step 4a)
 

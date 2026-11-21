@@ -1,0 +1,5 @@
+std = "roblox"
+
+[lints]
+# The codebase deliberately uses short one-line statement pairs; this lint is style noise here.
+multiple_statements = "allow"

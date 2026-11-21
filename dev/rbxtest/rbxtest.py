@@ -181,7 +181,9 @@ def compare(old, new):
             lines.append(f"- NEW check: {k} ({n[k]['status']})")
     for k in o:
         if k not in n:
-            lines.append(f"- MISSING check (was {o[k]['status']}): {k}")
+            # A check that used to PASS and silently disappeared counts as a regression.
+            tag = "**REGRESSION** " if o[k]["status"] == "PASS" else ""
+            lines.append(f"- {tag}MISSING check (was {o[k]['status']}): {k}")
     perf = []
     for k in n:
         if k in o and n[k]["test"] == "performance":
@@ -193,7 +195,7 @@ def compare(old, new):
     out += lines or ["- No status changes."]
     if perf:
         out += ["", "Performance numbers (previous -> now):"] + perf
-    return "\n".join(out), any(l.startswith("- **REGRESSION**") for l in lines)
+    return "\n".join(out), any("**REGRESSION**" in l for l in lines)
 
 
 def summary(report):
@@ -263,7 +265,10 @@ def cmd_save(a):
         text += "\n\n" + cmp_text
     print(text)
     print(f"\nSaved {out_path}")
-    ok = report["status"] == "completed" and counts(report)["FAIL"] == 0 and not regression
+    if report["status"] == "completed" and not report["results"]:
+        print("\nRun completed with no results: treated as a failure (a suite must report at least one check).")
+    ok = (report["status"] == "completed" and bool(report["results"]) and counts(report)["FAIL"] == 0
+          and not regression)
     return 0 if ok else 1
 
 

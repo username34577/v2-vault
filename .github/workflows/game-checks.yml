@@ -6,6 +6,9 @@ on:
       - "games/**"
       - "dev/**"
       - ".github/workflows/game-checks.yml"
+      - "selene.toml"
+      - "stylua.toml"
+      - "rokit.toml"
   pull_request:
     paths:
       - "games/**"
@@ -24,6 +27,8 @@ jobs:
           unzip -q luau.zip -d "$HOME/luau"
       - name: rbxtest helper self-check
         run: python3 dev/rbxtest/rbxtest.py sync-check games/vfx-lab/default.project.json > /dev/null
+      - name: rbxtest report handling (exit codes, regressions, invalid reports)
+        run: python3 dev/rbxtest/test_rbxtest.py
       - name: Every game script compiles
         run: |
           status=0
@@ -34,3 +39,22 @@ jobs:
             fi
           done < <(find games dev -name '*.luau' -o -name '*.lua' | sort)
           exit $status
+
+  lint:
+    # selene + luau-lsp (Roblox types) + StyLua through dev/lint/lint.py; fails only on findings
+    # that are not in dev/lint/baseline.json. Versions match rokit.toml.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Luau tools
+        run: |
+          mkdir -p "$HOME/bin" && cd "$HOME/bin"
+          get() { curl -sSfL -o t.zip "$1" && unzip -oq t.zip && rm t.zip; }
+          get https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip
+          get https://github.com/Kampfkarren/selene/releases/download/0.32.0/selene-0.32.0-linux.zip
+          get https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-linux-x86_64.zip
+          get https://github.com/JohnnyMorganz/luau-lsp/releases/download/1.70.1/luau-lsp-linux-x86_64.zip
+          chmod +x rojo selene stylua luau-lsp
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+      - name: No new lint, type or format findings
+        run: python3 dev/lint/lint.py --report lint-report.json
