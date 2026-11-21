@@ -23,3 +23,8 @@ Follow AGENTS.md for Roblox work in this repo.
 - End of a work session: log verified lessons with the `session-learning` skill (`learning/`).
 - New game: style spec first (`game-style-spec`); before ads or launch: `first-60-seconds-review`.
 
+## Game research (consult before major decisions)
+
+- Before a major game-development decision (a new feature or system, economy or monetization, UI redesign, onboarding or progression change), consult the references and say which ones you used: `python "research/Roblox Game Research/_tools/research_index.py" --consult "..."`, then follow the `game-research` skill. A UserPromptSubmit hook in `.claude/settings.json` adds the top matches to prompts that look like design decisions.
+- Log each such decision as a row in `research/Roblox Game Research/Reference Log.md` (which references influenced which feature).
+- New recordings and screenshots go in `research/Roblox Game Research/_inbox/`; the SessionStart hook files them and rebuilds the index. Hub: `research/Roblox Game Research/Roblox Game Research.md`.

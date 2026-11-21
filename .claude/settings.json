@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo `# <#` >/dev/null; for p in python python3; do \"$p\" -c 1 >/dev/null 2>&1 && exec \"$p\" \"$CLAUDE_PROJECT_DIR/research/Roblox Game Research/_tools/research_index.py\" --hook session; done; exit 0 #> >$null; python \"$env:CLAUDE_PROJECT_DIR\\research\\Roblox Game Research\\_tools\\research_index.py\" --hook session; exit 0",
+            "timeout": 300
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo `# <#` >/dev/null; for p in python python3; do \"$p\" -c 1 >/dev/null 2>&1 && exec \"$p\" \"$CLAUDE_PROJECT_DIR/research/Roblox Game Research/_tools/research_index.py\" --hook prompt; done; exit 0 #> >$null; python \"$env:CLAUDE_PROJECT_DIR\\research\\Roblox Game Research\\_tools\\research_index.py\" --hook prompt; exit 0",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

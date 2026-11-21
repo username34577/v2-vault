@@ -28,3 +28,6 @@ LihFolk Vault V2/.smart-env/
 # lint tool downloads (luau-lsp Roblox definitions)
 dev/lint/.cache/
 sourcemap.json
+
+# game research: videos over 95 MB stay local (GitHub rejects files over 100 MB)
+research/Roblox Game Research/Media/_large/

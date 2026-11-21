@@ -1,0 +1,169 @@
+{
+ "generated": "2026-11-21",
+ "games": [
+  {
+   "game": "Fish It",
+   "note": "research/Roblox Game Research/Games/Fish It.md",
+   "genre": "idle fishing, collection, RNG",
+   "relevant_to": [],
+   "status": "in progress",
+   "sections_filled": [
+    "Snapshot"
+   ],
+   "media": 0,
+   "media_unanalyzed": 0,
+   "influenced": [],
+   "design_mentions": [],
+   "background": [
+    "Teardown - Fish It"
+   ]
+  },
+  {
+   "game": "Grow a Garden",
+   "note": "research/Roblox Game Research/Games/Grow a Garden.md",
+   "genre": "farming simulator, idle",
+   "relevant_to": [
+    "grow-a-monster"
+   ],
+   "status": "in progress",
+   "sections_filled": [
+    "Snapshot"
+   ],
+   "media": 0,
+   "media_unanalyzed": 0,
+   "influenced": [
+    "grow-a-monster: Core concept: throw food at your monster until it's huge",
+    "grow-a-monster: v0.2 art direction: bright, cute-cartoony, cozy, rounded"
+   ],
+   "design_mentions": [],
+   "background": [
+    "Case Study - Grow a Garden"
+   ]
+  },
+  {
+   "game": "Steal An Egg",
+   "note": "research/Roblox Game Research/Games/Steal An Egg.md",
+   "genre": "steal / collect tycoon, pets",
+   "relevant_to": [
+    "snatch-the-sun"
+   ],
+   "status": "in progress",
+   "sections_filled": [
+    "Snapshot"
+   ],
+   "media": 0,
+   "media_unanalyzed": 0,
+   "influenced": [
+    "snatch-the-sun: Name \"Snatch the Sun\", not \"Steal the ___\"",
+    "snatch-the-sun: Grab-and-hold loop with steal counterplay"
+   ],
+   "design_mentions": [],
+   "background": [
+    "Teardown - Steal An Egg"
+   ]
+  },
+  {
+   "game": "Steal a Brainrot",
+   "note": "research/Roblox Game Research/Games/Steal a Brainrot.md",
+   "genre": "steal tycoon, idle, PvP",
+   "relevant_to": [
+    "snatch-the-sun"
+   ],
+   "status": "in progress",
+   "sections_filled": [
+    "Snapshot"
+   ],
+   "media": 0,
+   "media_unanalyzed": 0,
+   "influenced": [
+    "snatch-the-sun: Name \"Snatch the Sun\", not \"Steal the ___\"",
+    "snatch-the-sun: Grab-and-hold loop with steal counterplay"
+   ],
+   "design_mentions": [],
+   "background": [
+    "Case Study - Steal a Brainrot"
+   ]
+  },
+  {
+   "game": "Throw Food For Animals",
+   "note": "research/Roblox Game Research/Games/Throw Food For Animals.md",
+   "genre": "silly throwing simulator",
+   "relevant_to": [
+    "grow-a-monster"
+   ],
+   "status": "in progress",
+   "sections_filled": [
+    "Snapshot"
+   ],
+   "media": 0,
+   "media_unanalyzed": 0,
+   "influenced": [
+    "grow-a-monster: Core concept: throw food at your monster until it's huge"
+   ],
+   "design_mentions": [],
+   "background": []
+  }
+ ],
+ "media": [],
+ "decisions": [
+  {
+   "date": "2026-11-18",
+   "project": "grow-a-monster",
+   "feature": "Core concept: throw food at your monster until it's huge",
+   "refs": [
+    "Throw Food For Animals",
+    "Grow a Garden",
+    "Top Roblox Games - Nov 2026"
+   ],
+   "influence": "Mixes silly throwing (Throw Food For Animals, top 5) with grow/collect (Grow a Garden). *(backfilled: `research/Game Ideas.md`)*",
+   "status": "built"
+  },
+  {
+   "date": "2026-11-19",
+   "project": "grow-a-monster",
+   "feature": "v0.2 art direction: bright, cute-cartoony, cozy, rounded",
+   "refs": [
+    "Grow a Garden"
+   ],
+   "influence": "Owner's brief: \"like Grow a Garden\", goofy edge. *(backfilled: `games/grow-a-monster/README.md`)*",
+   "status": "built"
+  },
+  {
+   "date": "2026-11-19",
+   "project": "grow-a-monster",
+   "feature": "v0.2 first 30 seconds: bouncing arrow and \"Tap to feed\" hint, no tutorial wall",
+   "refs": [
+    "funnels-and-tutorial-lockout",
+    "five-game-improvements"
+   ],
+   "influence": "TikTok research: fix the first 30 seconds without locking players in a tutorial. *(backfilled: `games/grow-a-monster/README.md`)*",
+   "status": "built"
+  },
+  {
+   "date": "2026-11-19",
+   "project": "snatch-the-sun",
+   "feature": "Name \"Snatch the Sun\", not \"Steal the ___\"",
+   "refs": [
+    "Steal a Brainrot",
+    "Steal An Egg",
+    "Top Roblox Games - Nov 2026"
+   ],
+   "influence": "The \"Steal a ___\" space is crowded; a trendy title gets clicks but gameplay keeps players. *(backfilled: `games/snatch-the-sun/DESIGN.md`)*",
+   "status": "decided"
+  },
+  {
+   "date": "2026-11-19",
+   "project": "snatch-the-sun",
+   "feature": "Grab-and-hold loop with steal counterplay",
+   "refs": [
+    "Steal a Brainrot",
+    "Steal An Egg"
+   ],
+   "influence": "The design cites the steal/collect trend. Its counterplay rules (Sun Overload, 1 s no-catch after a throw) match the teardowns' \"visible timer + counterplay\" advice; that link is inferred, not stated in the doc. *(backfilled: `games/snatch-the-sun/DESIGN.md`, `research/Top Roblox Games - Nov 2026.md`)*",
+   "status": "proposed"
+  }
+ ],
+ "unsorted": [],
+ "needs_analysis": [],
+ "inbox_pending": []
+}
